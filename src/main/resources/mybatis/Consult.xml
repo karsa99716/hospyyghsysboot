@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ConsultDAO">
+    <resultMap type="com.bean.Consult" id="BaseResultMap">
+      <id column="id" property="id" jdbcType="INTEGER"/>
+      <result column="sid" property="sid" jdbcType="INTEGER"/>
+      <result column="diseaseid" property="diseaseid" jdbcType="INTEGER"/>
+      <result column="content" property="content" jdbcType="VARCHAR"/>
+      <result column="savetime" property="savetime" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <select id="selectAll" parameterType="Int" resultMap="BaseResultMap">
+      select * from consult where diseaseid=#{diseaseid} order by savetime desc
+    </select>
+    
+    <insert id="add" parameterType="com.bean.Consult">
+      insert into consult values(null,#{sid},#{diseaseid},#{content},#{savetime})
+    </insert>
+    
+    <delete id="delete" parameterType="Int">
+      delete from consult where id=#{id}
+    </delete>
+    
+    
+    
+</mapper>
+

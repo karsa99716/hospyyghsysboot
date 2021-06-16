@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ProjectjcmsgDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Projectjcmsg">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="ddno" jdbcType="VARCHAR" property="ddno" />
+    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
+    <result column="num" jdbcType="VARCHAR" property="num" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+      <result column="note" jdbcType="VARCHAR" property="note" />
+  </resultMap>
+  
+   <insert id="add" parameterType="com.bean.Projectjcmsg">
+      insert into projectjcmsg values(null,#{ddno},#{projectid},#{num},#{price},'')
+    </insert>
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from projectjcmsg where 1=1 
+     <if test="key!=null and key!=''">
+     and projectid in(select id from project where name like "%"#{key}"%") 
+     </if>
+     <if test="ddno!=null and ddno!=''">
+     and ddno=#{ddno}
+     </if>
+      <if test="note!=null and note!=''">
+          and note=#{note}
+      </if>
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="int" resultType="com.bean.Projectjcmsg">
+      select * from projectjcmsg where id=#{id}
+    </select>
+    
+    <delete id="delete" parameterType="Int">
+      delete from projectjcmsg where id=#{id}
+    </delete>
+
+    <update id="update" parameterType="com.bean.Projectjcmsg">
+        update projectjcmsg
+        <set>
+            <if test="note!=null and note!=''"> note=#{note},</if>
+        </set>
+        where id=#{id}
+    </update>
+ 
+</mapper>

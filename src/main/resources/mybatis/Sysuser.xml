@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.SysuserDAO">
+    <resultMap type="com.bean.Sysuser" id="BaseResultMap">
+		  <id column="id" property="id" jdbcType="INTEGER"/>
+		  <result column="usertype" property="usertype" jdbcType="VARCHAR"/>
+		  <result column="username" property="username" jdbcType="VARCHAR"/>
+		  <result column="userpwd" property="userpwd" jdbcType="VARCHAR"/>
+		  <result column="realname" property="realname" jdbcType="VARCHAR"/>
+		  <result column="sex" property="sex" jdbcType="VARCHAR"/>
+		  <result column="tel" property="tel" jdbcType="VARCHAR"/>
+		  <result column="idcard" property="idcard" jdbcType="VARCHAR"/>
+		  <result column="delstatus" property="delstatus" jdbcType="VARCHAR"/>
+		  <result column="savetime" property="savetime" jdbcType="VARCHAR"/>
+		  <result column="filename" property="filename" jdbcType="VARCHAR"/>
+		  <result column="age" property="age" jdbcType="VARCHAR"/>
+		  <result column="officeid" property="officeid" jdbcType="VARCHAR"/>
+		  <result column="sc" property="sc" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    
+    <insert id="add" parameterType="com.bean.Sysuser">
+	  insert into sysuser values(null,#{username},#{userpwd},#{usertype},#{realname},#{sex},#{age},#{tel},#{idcard},#{delstatus},#{savetime},#{filename},#{officeid},#{sc})
+	</insert>
+    
+    <select id="selectAll" parameterType="HashMap" resultMap="BaseResultMap">
+	  select * from sysuser where  delstatus=0
+	  <if test="key!=null and key!=''">
+	   and realname like "%"#{key}"%"
+	  </if>
+	  <if test="username!=null and username!=''">
+	   and username =#{username}
+	  </if>
+	  <if test="userpwd!=null and userpwd!=''">
+	   and userpwd =#{userpwd}
+	  </if>
+	  <if test="usertype!=null and usertype!=''">
+	   and usertype =#{usertype}
+	  </if>
+		<if test="nothz!=null and nothz!=''">
+			and usertype != '患者'
+		</if>
+
+		<if test="officeid!=null and officeid!=''">
+			and officeid =#{officeid}
+		</if>
+	  <if test="pc!=null and pc!=''">
+	   and id not in (select doctorid from work )
+	  </if>
+	  order by id desc
+	</select>
+	
+	<select id="findById" parameterType="Int" resultType="com.bean.Sysuser">
+	  select * from sysuser where id=#{id}
+	</select>
+	
+	
+	
+	<update id="update" parameterType="Int">
+	  update sysuser
+	  <set>
+		  <if test="userpwd!=null and userpwd!=''">userpwd=#{userpwd},</if>
+		  <if test="realname!=null and realname!=''">realname=#{realname},</if>
+		  <if test="sex!=null and sex!=''">sex=#{sex},</if>
+		  <if test="tel!=null and tel!=''">tel=#{tel},</if>
+		  <if test="idcard!=null and idcard!=''">idcard=#{idcard},</if>
+		  <if test="delstatus!=null and delstatus!=''">delstatus=#{delstatus},</if>
+		  <if test="filename!=null and filename!=''">filename=#{filename},</if>
+		  <if test="age!=null and age!=''">age=#{age},</if>
+		  <if test="officeid!=null and officeid!=''">officeid=#{officeid},</if>
+		  <if test="sc!=null and sc!=''">sc=#{sc},</if>
+	  </set>
+	  where id=#{id}
+	</update>
+	
+	
+	
+	
+	
+	
+	
+</mapper>
+

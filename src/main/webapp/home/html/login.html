@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<html style="background-color: #e2e2e2;">
+<head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="{{ lay.base.keywords }}">
+  <meta name="description" content="{{ lay.base.description }}">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>医院预约挂号系统</title>
+  <link rel="stylesheet" href="../res/layui/css/layui.css">
+  <link rel="stylesheet" href="../res/css/global.css">
+  <script type="text/javascript" src="../../axios/vue.js"></script>
+  <script type="text/javascript" src="../../axios/axios.min.js"></script>
+  <script type="text/javascript" src="../../axios/qs.js"></script>
+  <script type="text/javascript" src="../../axios/getUrlParams.js"></script>
+  <script type="text/javascript" src="../../layer/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="../../layer/layer.js"></script>
+  <style>
+    .header{border-bottom: 1px solid #404553; border-right: 1px solid #404553;}
+    /*验证码*/
+
+    .upload-awrp {
+      overflow: hidden;
+      margin: 120px 0;
+    }
+
+    .code {
+      font-family: Arial;
+      font-style: italic;
+      font-size: 30px;
+      border: 0;
+      padding: 2px 3px;
+      letter-spacing: 3px;
+      font-weight: bolder;
+      float: left;
+      cursor: pointer;
+      width: 150px;
+      height: 31px;
+      line-height: 30px;
+      text-align: center;
+      vertical-align: middle;
+      border: 1px solid #6D6D72;
+    }
+  </style>
+</head>
+<body class="fly-full">
+<div id="app">
+    <div id="headeriframe">
+    </div>
+
+
+
+    <div class="fly-main" style="overflow: hidden;">
+
+      <div class="layui-container fly-marginTop">
+        <div class="fly-panel fly-panel-user" pad20>
+          <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title">
+              <li class="layui-this">登入</li>
+              <li><a href="reg.html">注册</a></li>
+            </ul>
+            <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+              <div class="layui-tab-item layui-show">
+                <div class="layui-form layui-form-pane">
+                  <form method="post">
+                    <div class="layui-form-item">
+                      <label for="L_email" class="layui-form-label">用户名</label>
+                      <div class="layui-input-inline">
+                        <input type="text" v-model="username" required lay-verify="required" autocomplete="off" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label for="L_pass" class="layui-form-label">密码</label>
+                      <div class="layui-input-inline">
+                        <input type="password" v-model="userpwd"  required lay-verify="required" autocomplete="off" class="layui-input">
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <label for="L_pass" class="layui-form-label">验证码</label>
+                      <div class="layui-input-inline">
+                        <input type="text" v-model="yzm"  required lay-verify="required" autocomplete="off" class="layui-input">
+                        <!--随机验证码-->
+
+                      </div>
+                      <div class="layui-inline">
+                        <div id="check-code" style="overflow: hidden;">
+                          <div class="code" id="data_code"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="layui-form-item">
+                      <a class="layui-btn" href="javascript:;" @click="login()">立即登录</a>
+                      <span style="padding-left:20px;">
+                  <!--<a href="forget.html">忘记密码？</a>-->
+                      </span>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    <div id="footiframe">
+    </div>
+
+  </div>
+</div>
+</body>
+<script src="../res/layui/layui.js"  charset="utf-8"></script>
+<script>
+
+
+
+    window.onload=function(){
+        $("#headeriframe").load("head.html")
+        $("#footiframe").load("foot.html")
+    }
+
+
+
+
+    var qs = Qs
+    var vmm = new Vue({
+        el: '#app',
+        data: {
+            username:"",
+            userpwd:"",
+            yzm:"",
+        },
+        mounted(){
+            //this.login()
+
+        },
+        methods: {
+            login() {
+                this.data_code = document.getElementById("data_code").innerHTML
+                if(this.username==""){
+                    layer.msg('登录名不得为空')
+                    return false;
+                }
+                if(this.userpwd==""){
+                    layer.msg('密码不得为空')
+                    return false;
+                }
+                if(this.yzm==""){
+                    layer.msg('验证码不得为空')
+                    return false;
+                }
+                if(this.yzm.toLowerCase() != this.data_code.toLowerCase()){
+                    layer.msg('验证码不正确 ');
+                    return false;
+                }
+                // console.log(this.username+"--"+this.userpwd+"--"+this.yzm)
+                axios.post('../../admin/memberLogin', qs.stringify({
+                    username: this.username,
+                    userpwd : this.userpwd,
+                    yzm: this.yzm,
+                })).then(response => {
+                    if(response.data.data==200){
+                        //console.log(response.data.admin.username)
+                        window.location.replace("index.html")
+                    }else{
+                        layer.msg("用户名或密码错误")
+                    }
+                }).catch(error => {
+                    console.log(error)
+                })
+            },
+        }
+    });
+
+
+
+    /**
+     * 验证码
+     * @param {Object} o 验证码长度
+     */
+    $.fn.code_Obj = function(o) {
+        var _this = $(this);
+        var options = {
+            code_l: o.codeLength,//验证码长度
+            codeChars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+            ],
+            codeColors: ['#f44336', '#009688', '#cddc39', '#03a9f4', '#9c27b0', '#5e4444', '#9ebf9f', '#ffc8c4', '#2b4754', '#b4ced9', '#835f53', '#aa677e'],
+            code_Init: function() {
+                var code = "";
+                var codeColor = "";
+                var checkCode = _this.find("#data_code");
+                for(var i = 0; i < this.code_l; i++) {
+                    var charNum = Math.floor(Math.random() * 49);
+                    code += this.codeChars[charNum];
+                }
+                for(var i = 0; i < this.codeColors.length; i++) {
+                    var charNum = Math.floor(Math.random() * 12);
+                    codeColor = this.codeColors[charNum];
+                }
+                console.log(code);
+                if(checkCode) {
+                    checkCode.css('color', codeColor);
+                    checkCode.className = "code";
+                    checkCode.text(code);
+                    checkCode.attr('data-value', code);
+                }
+            }
+        };
+
+        options.code_Init();//初始化验证码
+        _this.find("#data_code").bind('click', function() {
+            options.code_Init();
+        });
+    };
+    /**
+     * 验证码
+     * codeLength:验证码长度
+     */
+    $('#check-code').code_Obj({
+        codeLength: 5
+    });
+</script>
+</html>

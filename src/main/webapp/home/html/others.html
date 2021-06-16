@@ -1,0 +1,133 @@
+
+
+<!DOCTYPE html>
+<html style="background-color: #e2e2e2;" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="{{ lay.base.keywords }}">
+  <meta name="description" content="{{ lay.base.description }}">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>医院预约挂号系统</title>
+  <link rel="stylesheet" href="../res/layui/css/layui.css">
+  <link rel="stylesheet" href="../res/css/global.css">
+  <script type="text/javascript" src="../../axios/vue.js"></script>
+  <script type="text/javascript" src="../../axios/axios.min.js"></script>
+  <script type="text/javascript" src="../../axios/qs.js"></script>
+  <script type="text/javascript" src="../../layer/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="../../layer/layer.js"></script>
+  <style>
+    .header{border-bottom: 1px solid #404553; border-right: 1px solid #404553;}
+  </style>
+</head>
+<body class="fly-full">
+<div id="app">
+<div>
+<div id="headeriframe">
+</div>
+
+
+
+<div class="fly-main" style="overflow: hidden;">
+
+  <blockquote class="layui-elem-quote layui-text">
+    健康知识
+  </blockquote>
+  <hr class="layui-bg-blue">
+  <div class="layui-tab layui-tab-brief">
+    <ul class="layui-tab-title">
+      <li class="layui-this">健康知识</li>
+    </ul>
+  </div>
+
+  <ul class="fly-case-list">
+    <li data-id="123" v-for="news in newslist">
+      <a class="fly-case-img" v-bind:href="show(news.id)" >
+        <img :src="['../../upload/'+news.img]">
+        <cite class="layui-btn layui-btn-primary layui-btn-small">点击查看</cite>
+      </a>
+      <h2><a v-bind:href="show(news.id)">{{news.title}}</a></h2>
+      <div class="fly-case-info">
+        <p class="layui-elip" style="font-size: 12px;">{{news.savetime}}</p>
+      </div>
+    </li>
+  </ul>
+
+  <!-- <blockquote class="layui-elem-quote layui-quote-nm">暂无数据</blockquote> -->
+
+  <div style="text-align: center;">
+    <div id="demo1" style="text-align: center"></div>
+  </div>
+
+</div>
+
+<div id="footiframe">
+</div>
+
+</div>
+</div>
+</body>
+<script src="../res/layui/layui.js"  charset="utf-8"></script>
+<script>
+    window.onload=function(){
+        $("#headeriframe").load("head.html")
+        $("#footiframe").load("foot.html")
+    }
+
+    var qs = Qs
+    var vmm = new Vue({
+        el: '#app',
+        data: {
+            bannerlist: [],
+            newslist:[],
+            //翻页
+            pageSize:8,
+        },
+        mounted(){
+            this.news_list()
+        },
+        methods: {
+
+            news_list() {
+                axios.post('../../admin/newsList',qs.stringify({
+                    pageSize:this.pageSize,
+                    type:'2',
+                })).then(response =>{
+                    layui.use(['laypage', 'layer'], function(){
+                        var laypage = layui.laypage
+                            ,layer = layui.layer;
+                        //总页数大于页码总数
+                        laypage.render({
+                            elem: 'demo1'
+                            ,limit:vmm.pageSize
+                            ,count: response.data.list.length //数据总数
+                            ,jump: function(obj,first){
+                                vmm.current_page(obj.curr,vmm.pageSize)
+                                console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                            }
+                        });
+                    });
+                }).catch(error =>{
+                    console.log(error)
+                })
+            },
+            current_page(page,pageSize){
+                axios.post('../../admin/newsList',qs.stringify({
+                    key:this.key,
+                    pageNum:page,
+                    pageSize:pageSize,
+                    type:'2',
+                })).then(response =>{
+                    this.newslist = response.data.pageInfo.list
+                }).catch(error =>{
+                    console.log(error)
+                })
+            },
+            show(id){
+                return "newsdetail.html?id="+id
+            },
+        }
+    });
+</script>
+</html>

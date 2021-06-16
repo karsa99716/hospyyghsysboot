@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.NewsDAO">
+  <resultMap id="BaseResultMap" type="com.bean.News">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+      <result column="img" jdbcType="VARCHAR" property="img" />
+    <result column="savetime" jdbcType="VARCHAR" property="savetime" />
+      <result column="type" jdbcType="VARCHAR" property="type" />
+
+  </resultMap>
+  
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from news where 1=1 
+     <if test="key!=null and key!=''">
+     and title like "%"#{key}"%"
+     </if>
+      <if test="type!=null and type!=''">
+          and type = #{type}
+      </if>
+
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="int" resultType="com.bean.News">
+      select * from news where id=#{id}
+    </select>
+    
+     <insert id="add" parameterType="com.bean.News">
+      insert into news values(null,#{title},#{img},#{note},#{savetime},#{type})
+    </insert>
+    
+    <update id="update" parameterType="com.bean.News">
+       update news
+       <set>
+         <if test="title !=null and title !=''"> title=#{title},</if>
+           <if test="title !=null and title !=''"> img=#{img},</if>
+         <if test="note !=null and note !=''"> note=#{note},</if>
+       </set>
+       where id=#{id}
+    </update>
+    
+    <delete id="delete" parameterType="Int">
+      delete from news where id=#{id}
+    </delete>
+    
+</mapper>

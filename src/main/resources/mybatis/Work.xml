@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.WorkDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Work">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="doctorid" jdbcType="VARCHAR" property="doctorid" />
+    <result column="mondaystr" jdbcType="VARCHAR" property="mondaystr" />
+    <result column="tuesdaystr" jdbcType="VARCHAR" property="tuesdaystr" />
+    <result column="wednesdaystr" jdbcType="VARCHAR" property="wednesdaystr" />
+    <result column="thursdaystr" jdbcType="VARCHAR" property="thursdaystr" />
+    <result column="fridaystr" jdbcType="VARCHAR" property="fridaystr" />
+    <result column="saturdaystr" jdbcType="VARCHAR" property="saturdaystr" />
+    <result column="sundaystr" jdbcType="VARCHAR" property="sundaystr" />
+  </resultMap>
+  
+  
+    <update id="update" parameterType="com.bean.Work">
+       update work
+       <set>
+         <if test="mondaystr!=null and mondaystr!=''"> mondaystr=#{mondaystr},</if>
+         <if test="tuesdaystr!=null and tuesdaystr!=''"> tuesdaystr=#{tuesdaystr},</if>
+         <if test="wednesdaystr!=null and wednesdaystr!=''"> wednesdaystr=#{wednesdaystr},</if>
+         <if test="thursdaystr!=null and thursdaystr!=''"> thursdaystr=#{thursdaystr},</if>
+         <if test="fridaystr!=null and fridaystr!=''"> fridaystr=#{fridaystr},</if>
+         <if test="saturdaystr!=null and saturdaystr!=''"> saturdaystr=#{saturdaystr},</if>
+         <if test="sundaystr!=null and sundaystr!=''"> sundaystr=#{sundaystr},</if>
+       </set>
+       where id=#{id}
+    </update>
+  
+  	<insert id="add" parameterType="com.bean.Work">
+      insert into work values(null,#{doctorid},#{mondaystr},#{tuesdaystr},#{wednesdaystr},#{thursdaystr},#{fridaystr},#{saturdaystr},#{sundaystr})
+    </insert>
+ 
+   <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from work where 1=1
+     <if test="key!=null and key!=''">
+     and doctorid in (select id from sysuser where realname like "%"#{key}"%") 
+     </if>
+     order by id desc
+   </select>
+   
+    <select id="findById" parameterType="int" resultType="com.bean.Work">
+      select * from work where id=#{id}
+    </select>
+    
+    <delete id="delete" parameterType="int">
+      delete from work where id=#{id}
+    </delete>
+    
+ 
+</mapper>

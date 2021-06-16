@@ -1,0 +1,80 @@
+
+
+<!DOCTYPE html>
+<html style="background-color: #e2e2e2;">
+<head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="{{ lay.base.keywords }}">
+  <meta name="description" content="{{ lay.base.description }}">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>医院预约挂号系统</title>
+  <link rel="stylesheet" href="../res/layui/css/layui.css">
+  <script type="text/javascript" src="../../axios/vue.js"></script>
+  <script type="text/javascript" src="../../axios/axios.min.js"></script>
+  <script type="text/javascript" src="../../axios/qs.js"></script>
+  <script type="text/javascript" src="../../axios/getUrlParams.js"></script>
+  <script type="text/javascript" src="../../layer/jquery-2.0.3.min.js"></script>
+  <style>
+  </style>
+</head>
+<body >
+<div id="app">
+  <form class="layui-form" action="">
+    <div class="layui-form-item layui-form-text">
+        <p v-html="content"></p>
+    </div>
+  </form>
+</div>
+</body>
+<script src="../res/layui/layui.js"  charset="utf-8"></script>
+<script>
+
+
+
+
+
+
+    var qs = Qs
+    var id = UrlParam.paramValues("id").toString()
+    var vmm = new Vue({
+        el: '#app',
+        data: {
+            content:"",
+            id: id,
+        },
+        mounted(){
+            this.registration_show()
+        },
+        methods: {
+            registration_show(){
+                axios.post("../../admin/registrationContentShow",qs.stringify({
+                    id:this.id,
+                })).then(response =>{
+                    this.registration = response.data.registration
+                    this.content = this.registration.content
+                })
+            },
+        }
+    });
+
+
+
+
+
+
+
+
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+
+
+
+    });
+</script>
+</html>

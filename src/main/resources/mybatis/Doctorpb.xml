@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DoctorpbDAO">
+    <resultMap type="com.bean.Doctorpb" id="BaseResultMap">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="doctorid" property="doctorid" jdbcType="INTEGER"/>
+        <result column="pbdate" property="pbdate" jdbcType="VARCHAR"/>
+        <result column="wb" property="wb" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="hnum" property="hnum" jdbcType="VARCHAR"/>
+        <result column="fee" property="fee" jdbcType="VARCHAR"/>
+
+    </resultMap>
+    
+    <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+      select * from Doctorpb where 1=1
+      <if test="doctorid!=null and doctorid!=''">
+      and doctorid = #{doctorid}
+      </if>
+        <if test="pbdate!=null and pbdate!=''">
+            and pbdate = #{pbdate}
+        </if>
+        <if test="wb!=null and wb!=''">
+            and wb = #{wb}
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+        <if test="today!=null and today!=''">
+            and pbdate &gt;= #{today}
+        </if>
+      order by id
+    </select>
+
+    <select id="selectAllDistinct" parameterType="hashmap" resultMap="BaseResultMap">
+        select distinct pbdate,wb,count(*) as hnum from Doctorpb where 1=1
+        <if test="doctorid!=null and doctorid!=''">
+            and doctorid = #{doctorid}
+        </if>
+        <if test="pbdate!=null and pbdate!=''">
+            and pbdate = #{pbdate}
+        </if>
+        <if test="wb!=null and wb!=''">
+            and wb = #{wb}
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+        <if test="today!=null and today!=''">
+            and pbdate &gt;= #{today}
+        </if>
+
+        group by pbdate,wb
+        order by pbdate
+    </select>
+
+
+    
+    <select id="findById" parameterType="int" resultType="com.bean.Doctorpb">
+      select * from Doctorpb where id=#{id}
+    </select>
+    
+    
+    
+    <insert id="add" parameterType="com.bean.Doctorpb">
+      insert into Doctorpb values(null,#{doctorid},#{pbdate},#{wb},#{status},#{fee})
+    </insert>
+    
+    <update id="update" parameterType="com.bean.Doctorpb">
+       update Doctorpb
+       <set>
+         <if test="status!=null and status!=''"> status=#{status},</if>
+       </set>
+       where id=#{id}
+    </update>
+    <delete id="delete" parameterType="Int">
+        delete from Doctorpb where id=#{id}
+    </delete>
+    
+    
+</mapper>
+

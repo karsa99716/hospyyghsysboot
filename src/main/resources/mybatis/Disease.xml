@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DiseaseDAO">
+    <resultMap type="com.bean.Disease" id="BaseResultMap">
+      <id column="id" property="id" jdbcType="INTEGER"/>
+      <result column="hzid" property="hzid" jdbcType="INTEGER"/>
+      <result column="part" property="part" jdbcType="VARCHAR"/>
+      <result column="zz" property="zz" jdbcType="VARCHAR"/>
+      <result column="sctime" property="sctime" jdbcType="VARCHAR"/>
+      <result column="delstatus" property="delstatus" jdbcType="VARCHAR"/>
+      <result column="savetime" property="savetime" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+	<insert id="add" parameterType="com.bean.Disease">
+	  insert into disease values(null,#{hzid},#{part},#{zz},#{sctime},#{delstatus},#{savetime})
+	</insert>
+	
+	<select id="selectAll" parameterType="String" resultMap="BaseResultMap">
+      select * from disease where hzid = #{hzid} 
+      <if test="stime != null and stime != ''">
+      	and savetime &gt;= #{stime}
+      </if>
+      <if test="etime != null and etime != ''">
+      	and savetime &lt;= #{etime}
+      </if>
+      order by id desc
+    </select>
+    
+	
+	<delete id="delete" parameterType="Int">
+	  delete from disease where id=#{id}
+	</delete>
+	
+	<select id="selectAllMsg" parameterType="HashMap" resultMap="BaseResultMap">
+	  select * from disease where 1=1 
+	  <if test="key!=null">
+	    and hzid in (select id from sysuser where realname like "%"#{key}"%")
+	  </if>
+	  order by savetime desc
+	</select>
+	
+	<select id="findById" parameterType="Int" resultType="com.bean.Disease">
+	  select * from disease where id=#{id}
+	</select>
+	
+</mapper>
+

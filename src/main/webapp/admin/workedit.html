@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    
+    
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../axios/getUrlParams.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+
+
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+            
+            
+        
+        <div class="row" id="app">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>编辑排班</h5>
+                        
+                    </div>
+                    <div class="ibox-content">
+                        <form  class="form-horizontal">
+                            
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">星期一</label>
+
+                                <div class="col-sm-10">
+                                	<select class="form-control m-b" v-model="mondaystr">
+                                	  <option value="无班">无班</option>
+                                	  <option value="有班">有班</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">星期二</label>
+
+                                <div class="col-sm-10">
+                                	<select class="form-control m-b" v-model="tuesdaystr">
+                                	  <option value="无班">无班</option>
+                                	  <option value="有班">有班</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">星期三</label>
+
+                                <div class="col-sm-10">
+                                	<select class="form-control m-b" v-model="wednesdaystr">
+                                	  <option value="无班">无班</option>
+                                	  <option value="有班">有班</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">星期四</label>
+
+                                <div class="col-sm-10">
+                                	<select class="form-control m-b" v-model="thursdaystr">
+                                	  <option value="无班" >无班</option>
+                                	  <option value="有班">有班</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">星期五</label>
+
+                                <div class="col-sm-10">
+                                	<select class="form-control m-b" v-model="fridaystr">
+                                	  <option value="无班">无班</option>
+                                	  <option value="有班">有班</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">星期六</label>
+
+                                <div class="col-sm-10">
+                                	<select class="form-control m-b" v-model="saturdaystr">
+                                	  <option value="无班">无班</option>
+                                	  <option value="有班">有班</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">星期日</label>
+
+                                <div class="col-sm-10">
+                                	<select class="form-control m-b" v-model="sundaystr">
+                                	  <option value="无班">无班</option>
+                                	  <option value="有班">有班</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            
+                            
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-primary" href="javascript:;" @click="edit()">提交</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+    <!-- 自定义js -->
+
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+    
+    <script>
+    
+
+    var qs = Qs
+    var id = UrlParam.paramValues("id").toString()
+    var vm = new Vue({
+  	  el:"#app",
+  	  data:{
+  		id:id,
+  		mondaystr:"",
+  		tuesdaystr:"",
+  		wednesdaystr:"",
+  		thursdaystr:"",
+  		fridaystr:"",
+  		saturdaystr:"",
+  		sundaystr:"",
+  		work:"",
+  	  },
+  	  mounted(){
+  		  this.show()
+  	  },
+  	  
+  	  methods:{
+  		  
+  		  show(){
+  			axios.post('workShow',qs.stringify({
+  				id:this.id,
+  			  })).then(response =>{
+  				  this.work = response.data.work
+  				  this.mondaystr = this.work.mondaystr
+  				this.tuesdaystr = this.work.tuesdaystr
+  				this.wednesdaystr = this.work.wednesdaystr
+  				this.thursdaystr = this.work.thursdaystr
+  				this.fridaystr = this.work.fridaystr
+  				this.saturdaystr = this.work.saturdaystr
+  				this.sundaystr = this.work.sundaystr
+  			  }).catch(error =>{
+  				  console.log(error)
+  			  })
+  		  },
+  		
+  		  edit(){
+  			  axios.post('workEdit',qs.stringify({
+  				id:this.id,
+  				mondaystr:this.mondaystr,
+  				tuesdaystr:this.tuesdaystr,
+  				wednesdaystr:this.wednesdaystr,
+  				thursdaystr:this.thursdaystr,
+  				fridaystr:this.fridaystr,
+  				saturdaystr:this.saturdaystr,
+  				sundaystr:this.sundaystr,
+  			  })).then(response =>{
+  				  window.location.replace("worklist.html")
+  			  }).catch(error =>{
+  				  console.log(error)
+  			  })
+  		  },
+  		  
+  		  
+  		  
+  	  }
+    })
+    </script>
+
+</body>
+
+</html>

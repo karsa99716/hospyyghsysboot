@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.InventoryDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Inventory">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="productid" jdbcType="VARCHAR" property="productid" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="flag" jdbcType="VARCHAR" property="flag" />
+    <result column="savetime" jdbcType="VARCHAR" property="savetime" />
+    <result column="userid" jdbcType="VARCHAR" property="userid" />
+    <result column="delstatus" jdbcType="VARCHAR" property="delstatus" />
+  </resultMap>
+  
+  <insert id="add" parameterType="com.bean.Inventory">
+      insert into inventory values(null,#{productid},#{num},#{flag},#{savetime},#{userid},#{delstatus})
+    </insert>
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from inventory where 1=1
+     <if test="key!=null and key!=''">
+     and productid in (select id from product where name like "%"#{key}"%")
+     </if>
+     <if test="categoryid!=null and categoryid!=''">
+     and productid in (select id from product where categoryid=#{categoryid})
+     </if>
+     <if test="flag!=null and flag!=''">
+     and flag=#{flag}
+     </if>
+     <if test="productid!=null and productid!=''">
+     and productid=#{productid}
+     </if>
+     <if test="delstatus!=null and delstatus!=''">
+     and delstatus=#{delstatus}
+     </if>
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="Int" resultType="com.bean.Inventory">
+     select * from inventory where id=#{id}
+   </select>
+   
+   <update id="update" parameterType="com.bean.Inventory">
+     update inventory
+     <set>
+       <if test="delstatus!=null and delstatus!=''">delstatus=#{delstatus}</if>
+     </set>
+     where id=#{id}
+   </update>
+   
+    
+  
+</mapper>

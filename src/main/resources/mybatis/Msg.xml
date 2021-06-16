@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.MsgDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Msg">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberid" jdbcType="INTEGER" property="memberid" />
+    <result column="doctorid" jdbcType="INTEGER" property="doctorid" />
+      <result column="note" jdbcType="VARCHAR" property="note" />
+      <result column="hfnote" jdbcType="VARCHAR" property="hfnote" />
+
+    <result column="savetime" jdbcType="VARCHAR" property="savetime" />
+      <result column="hftime" jdbcType="VARCHAR" property="hftime" />
+
+  </resultMap>
+  
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from Msg where 1=1
+     <if test="memberid!=null and memberid!=''">
+     and memberid = #{memberid}
+     </if>
+      <if test="doctorid!=null and doctorid!=''">
+          and doctorid = #{doctorid}
+      </if>
+      <if test="key!=null and key!=''">
+          and note like "%"#{key}"%"
+      </if>
+      <if test="yhf!=null and yhf!=''">
+          and hfnote != ""
+      </if>
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="int" resultType="com.bean.Msg">
+      select * from msg where id=#{id}
+    </select>
+    
+     <insert id="add" parameterType="com.bean.Msg">
+      insert into msg values(null,#{memberid},#{doctorid},#{note},#{hfnote},#{savetime},#{hftime})
+    </insert>
+    
+    <update id="update" parameterType="com.bean.Msg">
+       update msg
+       <set>
+         <if test="hfnote !=null and hfnote !=''"> hfnote=#{hfnote},</if>
+           <if test="hftime !=null and hftime !=''"> hftime=#{hftime},</if>
+       </set>
+       where id=#{id}
+    </update>
+    
+    <delete id="delete" parameterType="Int">
+      delete from msg where id=#{id}
+    </delete>
+    
+</mapper>

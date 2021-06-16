@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserdrugDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Userdrug">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="hospitalizedid" jdbcType="VARCHAR" property="hospitalizedid" />
+    <result column="productid" jdbcType="VARCHAR" property="productid" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="savetime" jdbcType="VARCHAR" property="savetime" />
+  </resultMap>
+  
+    <delete id="delete" parameterType="Int">
+      delete from userdrug where id=#{id}
+    </delete>
+  
+   <insert id="add" parameterType="com.bean.Userdrug">
+      insert into userdrug values(null,#{hospitalizedid},#{productid},#{num},#{price},#{savetime})
+    </insert>
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from userdrug where 1=1 
+     <if test="key!=null and key!=''">
+     and hospitalizedid in (select id from registration where name like "%"#{key}"%") 
+     </if>
+     <if test="hospitalizedid!=null and hospitalizedid!=''">
+     and hospitalizedid=#{hospitalizedid} 
+     </if>
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="Int" resultType="com.bean.Userdrug">
+     select * from userdrug where id=#{id}
+   </select>
+    
+    
+  
+</mapper>

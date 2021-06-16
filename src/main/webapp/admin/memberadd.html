@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    
+    
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+
+
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+            
+            
+        
+        <div class="row" id="app">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <form  class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="姓名" id="username" v-model="username" @blur="validatorloginName()">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                	<select class="form-control m-b" v-model="sex">
+                                	    <option  value="">请选择性别</option>
+                                        <option  value="男">男</option>
+						  				<option value="女">女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="年龄" v-model="age">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="电话" v-model="tel">
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="身份证" v-model="idcard">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-primary" href="javascript:;" @click="memberadd()">保存内容</a>
+                                    <button class="btn btn-white" type="submit">取消</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+    <!-- 自定义js -->
+
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+    
+    <script>
+    
+    
+
+    var qs = Qs
+    var vm = new Vue({
+  	  el:"#app",
+  	  data:{
+  		username:"",
+  		userpwd:"",
+  		realname:"",
+  		heightbar:"",
+  		filename:"",
+  		sex:"",
+  		weight:"",
+  		age:"",
+  		usertype:"患者",
+    		  
+  	  },
+  	  
+  	  methods:{
+  		
+  		  memberadd(){
+  			  
+  			  this.filename = $("#url").val()
+  			  
+  			  if(this.username==""){
+  				  layer.msg('登录名不得为空')
+  				  return false;
+  			  }
+  			  if(this.userpwd==""){
+  				  layer.msg('密码不得为空')
+  				  return false;
+  			  }
+  			  if(this.realname==""){
+  				  layer.msg('姓名不能为空')
+  				  return false;
+  			  }
+  			  
+  				if(this.filename==""){
+				  layer.msg('请上传头像')
+				  return false;
+			  }
+  			  
+  			  if(this.sex==undefined||this.sex==""){
+  				  layer.msg('请选择性别')
+  				  return false;
+  			  }
+  			  
+  			  if(this.age==""){
+  				  layer.msg('年龄不能为空')
+  				  return false;
+  			  }
+  			  if(this.heightbar==""){
+  				  layer.msg('身高不能为空')
+  				  return false;
+  			  }
+  			if(this.weight==""){
+				  layer.msg('体重不能为空')
+				  return false;
+			  }
+  			  
+  			  axios.post('memberAdd',qs.stringify({
+  				username:this.username,
+  				userpwd:this.userpwd,
+  				realname:this.realname,
+				filename:this.filename,
+				sex:this.sex,
+  				age:this.age,
+  				heightbar:this.heightbar,
+  				weight:this.weight,
+  				usertype:this.usertype,
+  			  })).then(response =>{
+  				  window.location.replace("memberlist.html")
+  			  }).catch(error =>{
+  				  console.log(error)
+  			  })
+  		  },
+  		  
+  		  
+  		  
+  		  
+  		  
+  	  }
+    })
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ProjectDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Project">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="delstatus" jdbcType="VARCHAR" property="delstatus" />
+  </resultMap>
+  
+  <insert id="add" parameterType="com.bean.Project">
+      insert into project values(null,#{name},#{unit},#{price},#{delstatus})
+    </insert>
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from project where 1=1 and delstatus=0
+     <if test="key!=null and key!=''">
+     and name like "%"#{key}"%"
+     </if>
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="int" resultType="com.bean.Project">
+      select * from project where id=#{id}
+    </select>
+    
+    
+    <update id="update" parameterType="com.bean.Project">
+       update project
+       <set>
+         <if test="name!=null and name!=''"> name=#{name},</if>
+         <if test="unit!=null and unit!=''"> unit=#{unit},</if>
+         <if test="price &gt; 0"> price=#{price},</if>
+         <if test="delstatus!=null and delstatus!=''"> delstatus=#{delstatus},</if>
+       </set>
+       where id=#{id}
+    </update>
+  
+</mapper>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <!-- Data Tables -->
+    <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+
+<style type="text/css">
+
+</style>
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight" id="app">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="" style="display: flex;align-items : center;">
+                            <input type="text" placeholder="请输入关键词" v-model="key"  class="input-sm form-control" style="margin-right: 10px;width: 20%;margin-bottom: 5px;">
+                            <a  href="javascript:void(0);" @click="office_list()" class="btn btn-primary " style="margin-right: 10px;">查询</a>
+                            <a onclick="location.replace('officeadd.html')" href="javascript:void(0);" class="btn btn-primary " style="margin-right: 10px;">新增科室</a>
+                        </div>
+                        <table class="table table-striped table-bordered table-hover " id="editable">
+                            <thead>
+                                <tr>
+                                    <th>科室名称</th>
+                                    <th>对应病症</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="gradeX" v-for="office in officelist">
+                                    <td> {{ office.name }} </td>
+                                    <td> {{ office.bz }} </td>
+                                    <td class="center"> 
+                                      <a v-bind:href="edit(office.id)" ><i class="fa  fa-edit"></i></a>
+                                      <a href="javascript:;" @click="del(office.id)"><i class="fa  fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="10">
+                                        <div id="demo1" style="text-align: center"></div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+
+
+    <script src="js/plugins/jeditable/jquery.jeditable.js"></script>
+
+    <!-- Data Tables -->
+
+    <!-- 自定义js -->
+
+
+    <!-- Page-Level Scripts -->
+    
+</body>
+<script src="../layui/layui.js" charset="utf-8"></script>
+<script>
+
+    var qs = Qs
+    var vmm = new Vue({
+        el: '#app',
+        data: {
+            officelist: [],
+            key: '',
+            //翻页
+            pageSize:10,
+            
+        },
+        mounted(){
+            this.office_list()
+        },
+        methods: {
+            //当前用户列表
+            office_list() {
+                axios.post('officeList',qs.stringify({
+                	key:this.key,
+                    pageSize:this.pageSize,
+                })).then(response =>{
+                    layui.use(['laypage', 'layer'], function(){
+                        var laypage = layui.laypage
+                            ,layer = layui.layer;
+                        //总页数大于页码总数
+                        laypage.render({
+                            elem: 'demo1'
+                            ,limit:vmm.pageSize
+                            ,count: response.data.list.length //数据总数
+                            ,jump: function(obj,first){
+                                vmm.current_page(obj.curr,vmm.pageSize)
+                                console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                            }
+                        });
+                    });
+                }).catch(error =>{
+                	console.log(error)
+                })
+            },
+            
+            
+            current_page(page,pageSize){
+            	axios.post('officeList',qs.stringify({
+                	key:this.key,
+                	pageNum:page,
+                    pageSize:pageSize,
+                })).then(response =>{
+                    this.officelist = response.data.pageInfo.list
+                }).catch(error =>{
+                	console.log(error)
+                })
+            },
+            
+            edit(id){
+            	return "officeedit.html?id="+id
+            },
+            
+            del(id){
+            	axios.post("officeDel",qs.stringify({
+            		id:id,
+            	})).then(response =>{
+            		window.location.href="officelist.html"
+            	}).catch(error =>{
+            		console.log(error)
+            	})
+            },
+            
+            
+        }
+    });
+</script>
+</html>

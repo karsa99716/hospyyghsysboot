@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="../layui/css/layui.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <style type="text/css">
+        .layui-upload-img{width: 92px; height: 92px; margin: 0 10px 10px 0;}
+        img#demo1 {}
+    </style>
+
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+<script type="text/javascript" src="../layui/layui.js" charset="utf-8"></script>
+
+<link rel="stylesheet" href="../kindeditor/themes/default/default.css" />
+<link rel="stylesheet" href="../kindeditor/plugins/code/prettify.css" />
+<script charset="utf-8" src="../kindeditor/plugins/code/prettify.js"></script>
+<script charset="utf-8" src="../kindeditor/kindeditor-all.js"></script>
+<script charset="utf-8" src="../kindeditor/lang/zh-CN.js"></script>
+<script>
+    KindEditor.ready(function(K) {
+        window.editor = K.create('#editor_id');
+    });
+</script>
+<script>
+    KindEditor.ready(function(K) {
+        K.create('textarea[name="note"]', {
+            uploadJson : '../kindeditor/jsp/upload_json.jsp',
+            fileManagerJson : '../kindeditor/jsp/file_manager_json.jsp',
+            allowFileManager : true,
+            allowImageUpload : true,
+            autoHeightMode : true,
+            afterCreate : function() {this.loadPlugin('autoheight');},
+            afterBlur : function(){ this.sync(); }  //Kindeditor下获取文本框信息
+        });
+    });
+</script>
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+
+
+
+        <div class="row" id="app">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>新增</h5>
+
+                    </div>
+                    <div class="ibox-content">
+                        <form  class="form-horizontal">
+
+
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">图片</label>
+                                <div class="col-sm-10">
+                                    <div class="layui-upload layui-input-inline">
+                                        <button type="button" class="layui-btn" id="test1">上传图片</button>
+                                        <div class="layui-upload-list">
+                                            <img class="layui-upload-img" id="demo1" style="width: 800px;height: 300px">
+                                            <p id="demoText"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-primary" href="javascript:;" @click="add()">保存内容</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+    <!-- 自定义js -->
+
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+
+    <script>
+        var img = "";
+        layui.use(['form','layer','upload'], function(){
+            $ = layui.jquery;
+            var form = layui.form
+                ,layer = layui.layer
+                ,upload = layui.upload;
+
+            //普通图片上传
+            layui.use('upload', function(){
+                var $ = layui.jquery
+                    ,upload = layui.upload;
+
+                //普通图片上传
+                var uploadInst = upload.render({
+                    elem: '#test1'
+                    ,url: 'uploadImg'
+                    ,accept:'images'
+                    ,size:50000
+                    ,before: function(obj){
+
+                        obj.preview(function(index, file, result){
+                            $('#demo1').attr('src', result);
+                        });
+                    }
+                    ,done: function(res){
+                        //如果上传失败
+                        if(res.code > 0){
+                            return layer.msg('上传失败');
+                        }
+                        //上传成功
+                        var demoText = $('#demoText');
+                        demoText.html('<span style="color: #4cae4c;">上传成功</span>');
+                        var fileupload = $(".image");
+                        fileupload.attr("value",res.data.src);
+                        //console.log(fileupload.attr("value"));
+                        console.log(res.data.src);
+                        img = res.data.src;
+                    }
+                    ,error: function(){
+                        //演示失败状态，并实现重传
+                        var demoText = $('#demoText');
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                        demoText.find('.demo-reload').on('click', function(){
+                            uploadInst.upload();
+                        });
+                    }
+                });
+            });
+
+
+
+
+
+
+        });
+
+        var qs = Qs
+        var vm = new Vue({
+            el:"#app",
+            data:{
+                img:"",
+            },
+
+            methods:{
+                add(){
+                    if(img == ""){
+                        layer.msg('图片不能为空')
+                        return false;
+                    }
+                    axios.post('bannerAdd',qs.stringify({
+                        img:img,
+                    })).then(response =>{
+                        window.location.replace("bannerlist.html")
+                    }).catch(error =>{
+                        console.log(error)
+                    })
+                },
+
+
+
+                clear_input(){
+                }
+
+            }
+        })
+
+
+
+
+    </script>
+
+</body>
+
+</html>

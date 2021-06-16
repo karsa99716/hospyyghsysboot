@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.HospitalizedDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Hospitalized">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="registid" jdbcType="VARCHAR" property="registid" />
+    <result column="bednum" jdbcType="VARCHAR" property="bednum" />
+    <result column="total" jdbcType="DECIMAL" property="total" />
+    <result column="yytotal" jdbcType="DECIMAL" property="yytotal" />
+    <result column="projecttotal" jdbcType="DECIMAL" property="projecttotal" />
+    <result column="iscy" jdbcType="VARCHAR" property="iscy" />
+    <result column="savetime" jdbcType="VARCHAR" property="savetime" />
+    <result column="cysavetime" jdbcType="VARCHAR" property="cysavetime" />
+    <result column="tktotal" jdbcType="DECIMAL" property="tktotal" />
+    <result column="bjtotal" jdbcType="DECIMAL" property="bjtotal" />
+    <result column="userid" jdbcType="DECIMAL" property="userid" />
+  </resultMap>
+  
+  <select id="selecttj" parameterType="hashmap" resultMap="BaseResultMap">
+  	SELECT
+	sum( CASE MONTH ( savetime ) WHEN '1' THEN yytotal+projecttotal ELSE 0 END ) AS january,
+	sum( CASE MONTH ( savetime ) WHEN '2' THEN yytotal+projecttotal ELSE 0 END ) AS february,
+	sum( CASE MONTH ( savetime ) WHEN '3' THEN yytotal+projecttotal ELSE 0 END ) AS march,
+	sum( CASE MONTH ( savetime ) WHEN '4' THEN yytotal+projecttotal ELSE 0 END ) AS april,
+	sum( CASE MONTH ( savetime ) WHEN '5' THEN yytotal+projecttotal ELSE 0 END ) AS may,
+	sum( CASE MONTH ( savetime ) WHEN '6' THEN yytotal+projecttotal ELSE 0 END ) AS june,
+	sum( CASE MONTH ( savetime ) WHEN '7' THEN yytotal+projecttotal ELSE 0 END ) AS july,
+	sum( CASE MONTH ( savetime ) WHEN '8' THEN yytotal+projecttotal ELSE 0 END ) AS august,
+	sum( CASE MONTH ( savetime ) WHEN '9' THEN yytotal+projecttotal ELSE 0 END ) AS september,
+	sum( CASE MONTH ( savetime ) WHEN '10' THEN yytotal+projecttotal ELSE 0 END ) AS october,
+	sum( CASE MONTH ( savetime ) WHEN '11' THEN yytotal+projecttotal ELSE 0 END ) AS november,
+	sum( CASE MONTH ( savetime ) WHEN '12' THEN yytotal+projecttotal ELSE 0 END ) AS december 
+	FROM hospitalized where 1=1 
+	<if test="key!=null and key!=''">and DATE_FORMAT(savetime,'%Y')=#{key}</if>
+   </select>
+  
+  <update id="update" parameterType="com.bean.Hospitalized">
+       update hospitalized
+       <set>
+         <if test="iscy!=null and iscy!=''"> iscy=#{iscy},</if>
+         <if test="yytotal &gt;= 0"> yytotal=#{yytotal},</if>
+         <if test="tktotal &gt;= 0"> tktotal=#{tktotal},</if>
+         <if test="bjtotal &gt;= 0"> bjtotal=#{bjtotal},</if>
+         <if test="bjtotal &gt;= 0"> projecttotal=#{projecttotal},</if>
+         <if test="userid!=null and userid!=''"> userid=#{userid},</if>
+         <if test="cysavetime!=null and cysavetime!=''"> cysavetime=#{cysavetime},</if>
+       </set>
+       where id=#{id}
+    </update>
+  
+   <insert id="add" parameterType="com.bean.Hospitalized">
+      insert into hospitalized values(null,#{registid},#{bednum},#{total},#{yytotal},#{projecttotal},#{iscy},#{savetime},#{cysavetime},#{tktotal},#{bjtotal},#{userid})
+    </insert>
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from hospitalized where 1=1 
+     <if test="key!=null and key!=''">
+     and (registid in (select id from registration where   memberid in (select id from sysuser where realname like "%"#{key}"%") ) or bednum like "%"#{key}"%")
+     </if>
+     <if test="memberid!=null and memberid!=''">
+     and registid in (select id from registration where memberid=#{memberid})
+     </if>
+     <if test="registid!=null and registid!=''">
+     and registid=#{registid}
+     </if>
+     <if test="iscy!=null and iscy!=''">
+     and iscy=#{iscy}
+     </if>
+     
+     order by id desc
+   </select>
+   
+    
+    <delete id="delete" parameterType="Int">
+      delete from hospitalized where id=#{id}
+    </delete>
+    
+    <select id="findById" parameterType="Int" resultType="com.bean.Hospitalized">
+      select * from hospitalized where id=#{id}
+    </select>
+    
+  
+</mapper>

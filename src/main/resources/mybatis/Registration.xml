@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.RegistrationDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Registration">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberid" jdbcType="VARCHAR" property="memberid" />
+     <result column="officeid" jdbcType="VARCHAR" property="officeid" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="delstatus" jdbcType="VARCHAR" property="delstatus" />
+    <result column="savetime" jdbcType="VARCHAR" property="savetime" />
+    <result column="ddno" jdbcType="VARCHAR" property="ddno" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="costtotal" jdbcType="DECIMAL" property="costtotal" />
+      <result column="hyid" jdbcType="INTEGER" property="hyid" />
+      <result column="doctorid" jdbcType="INTEGER" property="doctorid" />
+
+
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.bean.Registration">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  
+  <select id="selecttj1" parameterType="hashmap" resultMap="BaseResultMap">
+  	SELECT
+	sum( CASE MONTH ( savetime ) WHEN '1' THEN costtotal ELSE 0 END ) AS january,
+	sum( CASE MONTH ( savetime ) WHEN '2' THEN costtotal ELSE 0 END ) AS february,
+	sum( CASE MONTH ( savetime ) WHEN '3' THEN costtotal ELSE 0 END ) AS march,
+	sum( CASE MONTH ( savetime ) WHEN '4' THEN costtotal ELSE 0 END ) AS april,
+	sum( CASE MONTH ( savetime ) WHEN '5' THEN costtotal ELSE 0 END ) AS may,
+	sum( CASE MONTH ( savetime ) WHEN '6' THEN costtotal ELSE 0 END ) AS june,
+	sum( CASE MONTH ( savetime ) WHEN '7' THEN costtotal ELSE 0 END ) AS july,
+	sum( CASE MONTH ( savetime ) WHEN '8' THEN costtotal ELSE 0 END ) AS august,
+	sum( CASE MONTH ( savetime ) WHEN '9' THEN costtotal ELSE 0 END ) AS september,
+	sum( CASE MONTH ( savetime ) WHEN '10' THEN costtotal ELSE 0 END ) AS october,
+	sum( CASE MONTH ( savetime ) WHEN '11' THEN costtotal ELSE 0 END ) AS november,
+	sum( CASE MONTH ( savetime ) WHEN '12' THEN costtotal ELSE 0 END ) AS december 
+	FROM registration where 1=1 
+	<if test="key!=null and key!=''">and DATE_FORMAT(savetime,'%Y')=#{key}</if>
+   </select>
+  
+  <update id="update" parameterType="com.bean.Registration">
+       update registration
+       <set>
+         <if test="costtotal &gt; 0"> costtotal=#{costtotal},</if>
+         <if test="content!=null and content!=''"> content=#{content},</if>
+         <if test="delstatus!=null and delstatus!=''"> delstatus=#{delstatus},</if>
+         <if test="status!=null and status!=''"> status=#{status},</if>
+       </set>
+       where id=#{id}
+    </update>
+  
+  <insert id="add" parameterType="com.bean.Registration">
+      insert into registration values(null,#{memberid},#{officeid},#{price},#{content},#{delstatus},#{savetime},#{ddno},#{status},#{costtotal},#{hyid},#{doctorid})
+    </insert>
+  
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from registration where 1=1 and delstatus=0
+     <if test="key!=null and key!=''">
+     and memberid in (select id from sysuser where realname like "%"#{key}"%")
+     </if>
+     <if test="memberid!=null and memberid!=''">
+     and memberid=#{memberid}
+     </if>
+     <if test="isgh!=null and isgh!=''">
+     and officeid != 'null'
+     </if>
+     
+     <if test="id &gt; 0">
+     and id=#{id}
+     </if>
+     <if test="savetime!=null and savetime!=''">
+     and DATE_FORMAT(savetime,'%Y-%m-%d')=#{savetime}
+     </if>
+
+      <if test="doctorid!=null and doctorid!=''">
+          and doctorid = #{doctorid}
+      </if>
+     order by id desc
+   </select>
+
+    <select id="selectTj" parameterType="hashmap" resultMap="BaseResultMap">
+        select DISTINCT DATE_FORMAT(savetime,'%Y-%m-%d') as rq , count(*) as sl from registration where 1=1 and delstatus=0
+        <if test="key!=null and key!=''">
+
+        </if>
+        group by rq order by rq
+    </select>
+
+
+
+   
+   <select id="findById" parameterType="int" resultType="com.bean.Registration">
+      select * from registration where id=#{id}
+    </select>
+    
+    
+  
+  
+</mapper>

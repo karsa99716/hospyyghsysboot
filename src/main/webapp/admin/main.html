@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--360浏览器优先以webkit内核解析-->
+    <title>A+ 后台主题UI框架 - 主页示例</title>
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+    
+
+</head>
+
+<body class="gray-bg">
+    
+    <div class="wrapper wrapper-content" id="app">
+        <div class="row" style="text-align:center;font-size:24px;">
+           	 欢迎登录小型在线医疗系统后台管理系统
+        </div>
+        
+        <div style="width: 25%;height: 80px;background: #42B2A6;margin: 20px 4px;display: flex;">
+        <div style="padding: 5px 10px"><i class="fa fa-user-md fa-5x" style="color: white;"></i></div>
+        <div >
+          <ul>
+            <li style="padding:30px 0px;color:white;list-style: none;">
+              <label>今日门诊人数:{{registrationlist.length}}人</label>
+            </li>
+          </ul>
+        </div>
+        </div>
+        
+        <div class="ibox-content">
+            <div id="main" style="width: 100%;height:400px;"></div>
+        </div>
+    </div>
+    
+
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+    <script src="js/plugins/layer/layer.min.js"></script>
+    <!-- 自定义js -->
+    <script src="js/angel-main.min.js"></script>
+
+    <!-- 欢迎信息 -->
+    <script src="js/welcome.js"></script>
+</body>
+
+<script src="//cdn.bootcss.com/echarts/3.3.2/echarts.min.js" charset="utf-8"></script>
+<script src="//cdn.bootcss.com/echarts/3.3.2/extension/bmap.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var qs = Qs
+var vmm = new Vue({
+    el: '#app',
+    data: {
+        registrationlist: [],
+        key: '',
+        xdata:'',
+        ydata:'',
+        
+    },
+    mounted(){
+        this.registration_list()
+        this.getTj()
+    },
+    methods: {
+
+        
+        registration_list(){
+        	axios.post('registrationNum',qs.stringify({
+            })).then(response =>{
+            	this.registrationlist = response.data.registrationlist
+            }).catch(error =>{
+            	console.log(error)
+            })
+        },
+        getTj(){
+            axios.post('getTj',qs.stringify({
+            })).then(response =>{
+                // this.xdata = response.data.xdata;
+                // this.ydata = response.data.ydata;
+                this.xdata = eval('(' + response.data.xdata + ')');
+                this.ydata = eval('(' + response.data.ydata + ')');
+                //alert(this.xdata+"-"+this.ydata);
+                var myChart = echarts.init(document.getElementById('main'));
+                option = {
+                    xAxis: {
+                        type: 'category',
+                        data: this.ydata
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [{
+                        data: this.xdata,
+                        type: 'line',
+                        smooth: true
+                    }]
+                };
+
+
+                myChart.setOption(option);
+            }).catch(error =>{
+                console.log(error)
+            })
+        },
+        
+    }
+});
+</script>
+
+</html>

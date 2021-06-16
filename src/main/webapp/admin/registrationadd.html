@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    
+    
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../axios/getUrlParams.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+
+
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+            
+            
+        
+        <div class="row" id="app">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <form  class="form-horizontal">
+                        
+                            
+                        
+                        
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="姓名" id="realname" readonly="readonly" v-model="realname">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                	<input type="text" class="form-control" placeholder="性别" id="sex" readonly="readonly" v-model="sex">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="年龄" v-model="age"  readonly="readonly">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="电话" v-model="tel"  readonly="readonly">
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="身份证" v-model="idcard"  readonly="readonly">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                               	   <select class="form-control m-b" v-model="officeid">
+                                	    <option  value="">请选择科室</option>
+                                        <option v-for="office in officelist" :value="office.id">{{office.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="挂号费" v-model="price">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-primary" href="javascript:;" @click="registrationadd()">保存内容</a>
+                                    <button class="btn btn-white" type="submit">取消</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+    <!-- 自定义js -->
+
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+    
+    <script>
+    
+    
+
+    var qs = Qs
+    var id = UrlParam.paramValues("id").toString()
+    var vm = new Vue({
+  	  el:"#app",
+  	  data:{
+  		realname:"",
+  		sex:"",
+  		age:"",
+  		tel:"",
+  		idcard:"",
+  		officeid:"",
+  		price:"",
+  		officelist:[],
+  		admin:"",
+  	  },
+      mounted(){
+  		  this.get_office()
+  		  this.show()
+  		  this.get_admin()
+  	  },
+  	  methods:{
+  		  
+  		
+  		show(){
+  			axios.post("memberShow",qs.stringify({
+  				id:id,
+			  })).then(response =>{
+				  this.member = response.data.member
+				  this.realname = this.member.realname
+				  this.sex = this.member.sex
+				  this.age = this.member.age
+				  this.tel = this.member.tel
+				  this.idcard = this.member.idcard
+			  }).catch(error =>{
+				  console.log(error)
+			  })
+  		},
+  		get_office(){
+ 			axios.post("officeList",qs.stringify({
+			  })).then(response =>{
+				  this.officelist = response.data.pageInfo.list
+			  }).catch(error =>{
+				  console.log(error)
+			  })
+  		},
+  		
+  		  registrationadd(){
+  			
+  			  if(this.officeid==""){
+				  layer.msg('请选择科室')
+				  return false;
+			  }
+  			  
+  			if(this.price==""){
+				  layer.msg('挂号费不能为空')
+				  return false;
+			  }
+  			  
+  			  axios.post('registrationAdd',qs.stringify({
+  				officeid:this.officeid,
+  				memberid:id,
+  				price:this.price,
+  			  })).then(response =>{
+				  if(this.admin.usertype =="患者"){
+	  				  window.parent.layer.closeAll();
+					  window.parent.location.replace("guahaolist.html") 
+				  }
+  			      else{
+  			    	layer.closeAll()
+  				  	window.parent.layer.closeAll();
+  				  	window.parent.parent.layer.closeAll();
+  			    	window.parent.parent.location.replace("registrationlist.html")
+  			      }
+  			  }).catch(error =>{
+  				  console.log(error)
+  			  })
+  		  },
+  		  
+  		  
+
+          get_admin(){
+          	axios.post("checkadmin").then(response =>{
+          		if(response.data.data==400){
+          			location.href="login.html"
+          		}else{
+          			this.admin = response.data.admin
+          		}
+          	})
+          },
+  		  
+  		  
+  	  }
+    })
+    </script>
+
+</body>
+
+</html>

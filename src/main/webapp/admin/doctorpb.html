@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <!-- Data Tables -->
+    <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    <link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+    <script type="text/javascript" src="../axios/getUrlParams.js"></script>
+<style type="text/css">
+
+
+</style>
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight" id="app">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="" style="display: flex;align-items : center;">
+                            <input type="date" placeholder="请输入日期" v-model="key"  class="input-sm form-control" style="margin-right: 10px;width: 20%;margin-bottom: 5px;">
+                            <a  href="javascript:void(0);" @click="doctorpb_list()" class="btn btn-primary " style="margin-right: 10px;">查询</a>
+                            <a @click="add()" href="javascript:void(0);" class="btn btn-primary " style="margin-right: 10px;">新增排班</a>
+                            <a  href="javascript:history.go(-1);" class="btn btn-white " style="margin-right: 10px;">返回</a>
+
+                        </div>
+                        <table class="table table-striped table-bordered table-hover " id="editable">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>午别</th>
+                                    <th>总号源数</th>
+                                    <th>剩余号源数</th>
+                                    <th>已挂数</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="gradeX" v-for="doctorpb in doctorpblist">
+                                    <td>{{doctorpb.pbdate}} </td>
+                                    <td>{{doctorpb.wb == "a"?"上午":"下午"}}</td>
+                                    <td>{{doctorpb.hnum}}</td>
+                                    <td>{{doctorpb.yxnum}}</td>
+                                    <td>{{doctorpb.ygnum}}</td>
+                                    <td class="center">
+                                      <a href="javascript:;" @click="del(doctorpb.pbdate,doctorpb.wb)"><i class="fa  fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="10">
+                                        <div id="demo1" style="text-align: center"></div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+
+
+    <script src="js/plugins/jeditable/jquery.jeditable.js"></script>
+
+    <!-- Data Tables -->
+
+    <!-- 自定义js -->
+
+
+    <!-- Page-Level Scripts -->
+    
+</body>
+<script src="../layui/layui.js" charset="utf-8"></script>
+<script>
+    var id = UrlParam.paramValues("id").toString()
+    var qs = Qs
+    var vmm = new Vue({
+        el: '#app',
+        data: {
+            doctorpblist: [],
+            key: '',
+
+        },
+        mounted(){
+            this.doctorpb_list()
+            this.get_admin()
+        },
+        methods: {
+            //当前用户列表
+            doctorpb_list() {
+                axios.post('doctorpbList',qs.stringify({
+                    doctorid:id,
+                    key:this.key
+                })).then(response =>{
+                    this.doctorpblist = response.data.list
+                }).catch(error =>{
+                	console.log(error)
+                })
+            },
+            
+
+            
+
+            del(pbdate,wb){
+            	axios.post("doctorpbDel",qs.stringify({
+            		id:id,
+                    pbdate:pbdate,
+                    wb:wb,
+            	})).then(response =>{
+            		window.location.href="doctorpb.html?id="+id
+            	}).catch(error =>{
+            		console.log(error)
+            	})
+            },
+            add(){
+                location.replace("doctorpbadd.html?id="+id)
+            },
+            get_admin(){
+            	axios.post("checkadmin").then(response =>{
+            		if(response.data.data==400){
+            			location.href="login.html"
+            		}
+            	})
+            },
+        }
+    });
+</script>
+</html>

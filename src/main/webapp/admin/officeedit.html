@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+
+
+    <script type="text/javascript" src="../axios/vue.js"></script>
+    <script type="text/javascript" src="../axios/axios.min.js"></script>
+    <script type="text/javascript" src="../axios/qs.js"></script>
+    <script type="text/javascript" src="../axios/getUrlParams.js"></script>
+    <script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="../layer/layer.js"></script>
+
+    <link rel="stylesheet" href="../kindeditor/themes/default/default.css"/>
+    <link rel="stylesheet" href="../kindeditor/plugins/code/prettify.css"/>
+    <script charset="utf-8" src="../kindeditor/plugins/code/prettify.js"></script>
+    <script charset="utf-8" src="../kindeditor/kindeditor-all.js"></script>
+    <script charset="utf-8" src="../kindeditor/lang/zh-CN.js"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#editor_id');
+        });
+    </script>
+    <script>
+        KindEditor.ready(function (K) {
+            K.create('textarea[name="note"]', {
+                uploadJson: '../kindeditor/jsp/upload_json.jsp',
+                fileManagerJson: '../kindeditor/jsp/file_manager_json.jsp',
+                allowFileManager: true,
+                allowImageUpload: true,
+                autoHeightMode: true,
+                afterCreate: function () {
+                    this.loadPlugin('autoheight');
+                },
+                afterBlur: function () {
+                    this.sync();
+                }  //Kindeditor下获取文本框信息
+            });
+        });
+
+    </script>
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+
+
+    <div class="row" id="app">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>编辑科室</h5>
+
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal">
+
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">科室名称</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" v-model="name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">对应病症</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" v-model="bz">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">科室简介</label>
+                            <div class="col-sm-10">
+                                <textarea rows="" cols="" class="form-control" v-model="note" id="editor_id"></textarea>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-primary" href="javascript:;" @click="edit()">提交</a>
+                                <a class="btn btn-white" @click="clear_input()">取消</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 全局js -->
+<script src="js/jquery.min.js?v=2.1.4"></script>
+<script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+<!-- 自定义js -->
+
+<!-- iCheck -->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
+</script>
+
+<script>
+
+
+    var qs = Qs
+    var id = UrlParam.paramValues("id").toString()
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            name: "",
+            note: "",
+            id: id,
+            bz:"",
+        },
+        mounted() {
+            this.show()
+        },
+        methods: {
+            show() {
+                axios.post('officeShow', qs.stringify({
+                    id: this.id,
+                })).then(response => {
+                    this.office = response.data.office
+                    this.name = this.office.name
+                    this.bz = this.office.bz
+                    window.editor.html(this.office.note)
+                }).catch(error => {
+                    console.log(error)
+                })
+            },
+            edit() {
+                this.note = window.editor.html();
+                if (this.name == "") {
+                    layer.msg('科室名称不能为空')
+                    return false;
+                }
+                if (this.bz == "") {
+                    layer.msg('对应病症不能为空')
+                    return false;
+                }
+                if (this.note == "") {
+                    layer.msg('内容不能为空')
+                    return false;
+                }
+
+                axios.post('officeEdit', qs.stringify({
+                    id: this.id,
+                    name: this.name,
+                    note: this.note,
+                    bz:this.bz,
+                })).then(response => {
+                    layer.msg('操作成功')
+                    window.location.replace("officelist.html")
+                }).catch(error => {
+                    console.log(error)
+                })
+            },
+
+
+            clear_input() {
+                this.name = ""
+            }
+
+        }
+    })
+</script>
+
+</body>
+
+</html>

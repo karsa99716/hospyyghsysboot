@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.PrescriptionDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Prescription">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="ddno" jdbcType="VARCHAR" property="ddno" />
+    <result column="registid" jdbcType="VARCHAR" property="registid" />
+    <result column="doctorid" jdbcType="VARCHAR" property="doctorid" />
+    <result column="savetime" jdbcType="VARCHAR" property="savetime" />
+    <result column="ishj" jdbcType="VARCHAR" property="ishj" />
+    <result column="isqy" jdbcType="VARCHAR" property="isqy" />
+  </resultMap>
+  
+   <insert id="add" parameterType="com.bean.Prescription">
+      insert into prescription values(null,#{ddno},#{registid},#{doctorid},#{savetime},#{ishj},#{isqy})
+    </insert>
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from prescription where 1=1 
+     <if test="ddno!=null and ddno!=''">
+     and ddno=#{ddno}
+     </if>
+     <if test="ishj!=null and ishj!=''">
+     and ishj=#{ishj}
+     </if>
+     <if test="memberid!=null and memberid!=''">
+     and registid in (select id from registration where memberid=#{memberid})
+     </if>
+     <if test="key!=null and key!=''">
+     and registid in (select id from registration where name like "%"#{key}"%")
+     </if>
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="int" resultType="com.bean.Prescription">
+      select * from prescription where id=#{id}
+    </select>
+    
+    
+    <update id="update" parameterType="com.bean.Prescription">
+       update prescription
+       <set>
+         <if test="ishj!=null and ishj!=''"> ishj=#{ishj},</if>
+         <if test="isqy!=null and isqy!=''"> isqy=#{isqy},</if>
+       </set>
+       where id=#{id}
+    </update>
+    
+    <delete id="delete" parameterType="Int">
+      delete from prescription where id=#{id}
+    </delete>
+  
+</mapper>

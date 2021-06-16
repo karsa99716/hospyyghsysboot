@@ -1,0 +1,156 @@
+
+
+<!DOCTYPE html>
+<html style="background-color: #e2e2e2;" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="{{ lay.base.keywords }}">
+  <meta name="description" content="{{ lay.base.description }}">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>医院预约挂号系统</title>
+  <link rel="stylesheet" href="../res/layui/css/layui.css">
+  <link rel="stylesheet" href="../res/css/global.css">
+  <script type="text/javascript" src="../../axios/vue.js"></script>
+  <script type="text/javascript" src="../../axios/axios.min.js"></script>
+  <script type="text/javascript" src="../../axios/qs.js"></script>
+  <script type="text/javascript" src="../../layer/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="../../layer/layer.js"></script>
+  <style>
+    .header{border-bottom: 1px solid #404553; border-right: 1px solid #404553;}
+  </style>
+</head>
+<body class="fly-full">
+<div id="app">
+<div>
+<div id="headeriframe">
+</div>
+
+
+
+<div class="fly-main" style="overflow: hidden;">
+
+  <blockquote class="layui-elem-quote layui-text">
+    科室导航
+  </blockquote>
+  <hr class="layui-bg-blue">
+
+  <form class="layui-form layui-form-pane">
+
+    <div class="">
+      <div class="layui-inline">
+        <label class="layui-form-label">按症状</label>
+        <div class="layui-input-inline">
+          <input type="text" v-model="bz"  placeholder="按症状查找合适科室" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-inline">
+        <button type="button" class="layui-btn layui-btn-normal" id="LAY-component-form-setval" @click="office_list()">查询</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="layui-tab layui-tab-brief">
+    <ul class="layui-tab-title">
+      <li class="layui-this">科室导航</li>
+    </ul>
+  </div>
+
+  <ul class="fly-case-list">
+    <li data-id="123" v-for="office in officelist" >
+      <a class="fly-case-img" v-bind:href="show(office.id)" >
+        <cite class="layui-btn layui-btn-primary layui-btn-small">点击查看</cite>
+      </a>
+      <h2>
+        <blockquote class="layui-elem-quote layui-text">
+          <a v-bind:href="show(office.id)"><b>{{office.name}}</b></a>
+        </blockquote>
+      </h2>
+
+    </li>
+  </ul>
+
+  <!-- <blockquote class="layui-elem-quote layui-quote-nm">暂无数据</blockquote> -->
+
+  <div style="text-align: center;">
+    <div id="demo1" style="text-align: center"></div>
+  </div>
+
+</div>
+
+<div id="footiframe">
+</div>
+
+</div>
+</div>
+</body>
+<script src="../res/layui/layui.js"  charset="utf-8"></script>
+<script>
+
+
+
+    window.onload=function(){
+        $("#headeriframe").load("head.html")
+        $("#footiframe").load("foot.html")
+    }
+
+
+
+
+    var qs = Qs
+    var vmm = new Vue({
+        el: '#app',
+        data: {
+            bz:'',
+            officelist:[],
+            //翻页
+            pageSize:8,
+        },
+        mounted(){
+            this.office_list()
+        },
+        methods: {
+
+            office_list() {
+                axios.post('../../admin/officeList',qs.stringify({
+                    bz:this.bz,
+                    pageSize:this.pageSize
+                })).then(response =>{
+                    layui.use(['laypage', 'layer'], function(){
+                        var laypage = layui.laypage
+                            ,layer = layui.layer;
+                        //总页数大于页码总数
+                        laypage.render({
+                            elem: 'demo1'
+                            ,limit:vmm.pageSize
+                            ,count: response.data.list.length //数据总数
+                            ,jump: function(obj,first){
+                                vmm.current_page(obj.curr,vmm.pageSize)
+                                console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                            }
+                        });
+                    });
+                }).catch(error =>{
+                    console.log(error)
+                })
+            },
+            current_page(page,pageSize){
+                axios.post('../../admin/officeList',qs.stringify({
+                    key:this.key,
+                    bz:this.bz,
+                    pageNum:page,
+                    pageSize:pageSize,
+                })).then(response =>{
+                    this.officelist = response.data.pageInfo.list
+                }).catch(error =>{
+                    console.log(error)
+                })
+            },
+            show(id){
+                return "deptdetail.html?id="+id
+            },
+        }
+    });
+</script>
+</html>

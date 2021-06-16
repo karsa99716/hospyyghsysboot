@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ProductDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Product">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="costprice" jdbcType="DECIMAL" property="costprice" />
+    <result column="saleprice" jdbcType="DECIMAL" property="saleprice" />
+    <result column="supplier" jdbcType="VARCHAR" property="supplier" />
+    <result column="place" jdbcType="VARCHAR" property="place" />
+    <result column="categoryid" jdbcType="VARCHAR" property="categoryid" />
+    <result column="delstatus" jdbcType="VARCHAR" property="delstatus" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+  </resultMap>
+  
+  <update id="update" parameterType="com.bean.Product">
+       update product
+       <set>
+         <if test="name!=null and name!=''"> name=#{name},</if>
+         <if test="costprice &gt; 0"> costprice=#{costprice},</if>
+         <if test="saleprice &gt; 0"> saleprice=#{saleprice},</if>
+         <if test="supplier!=null and supplier!=''"> supplier=#{supplier},</if>
+         <if test="place!=null and place!=''"> place=#{place},</if>
+         <if test="categoryid!=null and categoryid!=''"> categoryid=#{categoryid},</if>
+         <if test="delstatus!=null and delstatus!=''"> delstatus=#{delstatus},</if>
+         <if test="unit!=null and unit!=''"> unit=#{unit},</if>
+       </set>
+       where id=#{id}
+    </update>
+  
+  <insert id="add" parameterType="com.bean.Product">
+      insert into product values(null,#{name},#{costprice},#{saleprice},#{supplier},#{place},#{categoryid},#{delstatus},#{unit})
+    </insert>
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from product where 1=1 and delstatus=0
+     <if test="key!=null and key!=''">
+     and name like "%"#{key}"%"
+     </if>
+     <if test="categoryid!=null and categoryid!=''">
+     and categoryid=#{categoryid}
+     </if>
+     
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="int" resultType="com.bean.Product">
+      select * from product where id=#{id}
+    </select>
+    
+    
+</mapper>

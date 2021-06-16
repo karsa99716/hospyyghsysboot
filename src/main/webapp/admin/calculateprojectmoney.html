@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    
+    
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../axios/getUrlParams.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+
+
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+            
+            
+        
+        <div class="row" id="app">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <form  class="form-horizontal">
+                        
+                        
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    应收金额：<input type="number" step="1" class="form-control" placeholder="金额" id="total" v-model="total">
+                                </div>
+                            </div>
+                        
+                        
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    支付金额：<input type="number" step="1" class="form-control" placeholder="支付金额" id="paytotal" v-model="paytotal">
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                     找零： <input type="number" step="1" class="form-control" placeholder="找零" id="sytotal" v-model="sytotal" readonly="readonly">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-primary" href="javascript:;" @click="edit()">划价</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+    <!-- 自定义js -->
+
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+    
+    <script>
+    
+    
+
+    var qs = Qs
+    var total = UrlParam.paramValues("total").toString()
+    var ddno = UrlParam.paramValues("ddno").toString()
+    var vm = new Vue({
+  	  el:"#app",
+  	  data:{
+  		num:"",
+  		total:total,
+  		ddno:ddno,
+  		paytotal:"",
+  		sytotal:"",
+  	  },
+  	  methods:{
+  		  
+  		edit(){
+  			if(this.paytotal==""){
+				  layer.msg('支付金额不得为空')
+				  return false;
+			  }
+			if(parseFloat(this.paytotal)<parseFloat(this.total)){
+				  layer.msg('多付一点哦')
+				  this.paytotal =""
+				  return false;
+			}else{
+				this.sytotal = parseFloat(this.paytotal) - parseFloat(this.total)
+			}
+  			
+  			axios.post("projectjcEdit",qs.stringify({
+  				ddno:this.ddno,
+  				total:this.total,
+  			})).then(response =>{
+  				 parent.layer.closeAll()
+  				 alert("操作成功")
+  				 parent.location.href="calculatesearchproject.html"
+  			})
+  			  
+  		},
+  		
+  	  }
+    })
+    </script>
+
+</body>
+
+</html>

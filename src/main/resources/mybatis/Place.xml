@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.PlaceDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Place">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="delstatus" jdbcType="VARCHAR" property="delstatus" />
+  </resultMap>
+  
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from place where 1=1 and delstatus=0
+     <if test="key!=null and key!=''">
+     and name like "%"#{key}"%"
+     </if>
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="int" resultType="com.bean.Place">
+      select * from place where id=#{id}
+    </select>
+    
+     <insert id="add" parameterType="com.bean.Place">
+      insert into place values(null,#{name},#{delstatus})
+    </insert>
+    
+    <update id="update" parameterType="com.bean.Place">
+       update place
+       <set>
+         <if test="name!=null and name!=''"> name=#{name},</if>
+         <if test="delstatus!=null and delstatus!=''"> delstatus=#{delstatus},</if>
+       </set>
+       where id=#{id}
+    </update>
+    
+    
+</mapper>

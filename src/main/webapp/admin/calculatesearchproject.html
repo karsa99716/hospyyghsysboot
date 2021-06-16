@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>医院预约挂号系统</title>
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <!-- Data Tables -->
+    <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+
+
+	<script type="text/javascript" src="../axios/vue.js"></script>
+	<script type="text/javascript" src="../axios/axios.min.js"></script>
+	<script type="text/javascript" src="../axios/qs.js"></script>
+	<script type="text/javascript" src="../axios/getUrlParams.js"></script>
+	<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../layer/layer.js"></script>
+	<link rel="stylesheet" href="../layer/layui.css"  media="all">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight" id="domapp">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                    
+                        <div class="layui-form-item" style="border:0px solid red;">
+                            <div class="layui-inline">
+						      <label class="layui-form-label" style="width: 100px;">ID</label>
+						      <div class="layui-input-inline">
+						        <input type="text" v-model="id_no"   autocomplete="off" class="layui-input">
+						      </div>
+						    </div>
+						    <div class="layui-inline">
+						      <label class="layui-form-label" style="width: 100px;">姓名</label>
+						      <div class="layui-input-inline">
+						        <input type="text" v-model="name"   autocomplete="off" class="layui-input">
+						      </div>
+						    </div>
+						    <div class="layui-inline">
+						      <label class="layui-form-label" style="width: 100px;">性别</label>
+						      <div class="layui-input-inline">
+						        <input type="text" v-model="sex"  autocomplete="off" class="layui-input">
+						      </div>
+						    </div>
+						    <div class="layui-inline">
+						      <label class="layui-form-label" style="width: 100px;">年龄</label>
+						      <div class="layui-input-inline">
+						        <input type="text" v-model="age"  autocomplete="off" class="layui-input">
+						      </div>
+						    </div>
+						    
+						    <div class="layui-inline">
+						      <label class="layui-form-label" style="width: 100px;">电话</label>
+						      <div class="layui-input-inline">
+						        <input type="text" v-model="tel"autocomplete="off" class="layui-input">
+						      </div>
+						    </div>
+						    
+						    <div class="layui-inline">
+						      <label class="layui-form-label" style="width: 100px;">身份证</label>
+						      <div class="layui-input-inline">
+						        <input type="text" v-model="idcard"  autocomplete="off" class="layui-input">
+						      </div>
+						    </div>
+						    
+						    <div class="layui-inline">
+						      <label class="layui-form-label" style="width: 100px;">科室</label>
+						      <div class="layui-input-inline">
+						        <input type="text" v-model="office"  autocomplete="off" class="layui-input">
+						      </div>
+						    </div>
+						    
+						    <div class="layui-inline">
+						      <label class="layui-form-label" style="width: 100px;">挂号费</label>
+						      <div class="layui-input-inline">
+						        <input type="text" v-model="price"  autocomplete="off" class="layui-input">
+						      </div>
+						    </div>
+						    
+						    
+						    <div class="layui-block" style="float: right;display:flex;">
+						      <button type="button" class="layui-btn" @click="choose_registraion()">选择患者</button>
+						      <button type="button" class="layui-btn" @click="calculate()">项目划价</button>
+						    </div>
+						    
+						  </div>
+
+                    </div>
+                    
+                    
+                    
+                    <div class="ibox-content" v-show="registration">
+                    
+                            <blockquote class="layui-elem-quote layui-text">
+                          	 检查项目
+							</blockquote>
+                    
+                        
+                        <table class="table table-striped table-bordered table-hover " id="editable">
+                            <tbody>
+                                <tr class="gradeX" >
+                                
+                                  <div style="border:1px solid #E5E6E7;padding: 12px 5px;">
+                                    <ul>
+                                      <li v-if="projectjcmsglist.length!=0" v-for="(projectjcmsg,i) in projectjcmsglist" style="margin-bottom: 5px;">{{i+1}}.&nbsp;&nbsp;&nbsp;&nbsp;{{projectjcmsg.project.name}}*{{projectjcmsg.num}}</li>
+                                    </ul>
+                                  </div>
+                                  
+                                    
+                                </tr>
+                                
+                                
+                            </tbody>
+                        </table>
+
+                    </div>
+                    
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+
+
+
+    <script src="js/plugins/jeditable/jquery.jeditable.js"></script>
+
+    <!-- Data Tables -->
+
+    <!-- 自定义js -->
+
+
+    <!-- Page-Level Scripts -->
+    
+</body>
+
+<script>
+
+//prompt层
+
+	var id = UrlParam.paramValues("id")
+	if(id==undefined){
+		id="";
+	}else{
+		id=id.toString()
+	}
+	
+    var qs = Qs
+    var vmm = new Vue({
+        el: '#domapp',
+        data: {
+        	id_no:"",
+        	name:"",
+        	sex:"",
+        	age:"",
+        	tel:"",
+        	idcard:"",
+        	office:"",
+        	price:"",
+        	ddno:"",
+        	total:"",
+        	registration:"",
+        	projectjcmsglist:[],
+        	
+            //翻页
+            pages:"",//总页数
+            pageNum:1,//当前页
+            hasPreviousPage:true,//是否有上一页
+        	hasNextPage:true,//是否有下一页
+            
+        },
+        created(){
+        	this.read_registration()
+        },
+        methods: {
+        	//划价
+        	calculate(){
+        		if(this.registration){
+        			if(parseFloat(this.total)>0){
+        		var index = layer.open({
+        			  title:'项目划价',
+        			  type: 2,
+        			  area: ['500px', '350px'],
+        			  fixed: false, //不固定
+        			  maxmin: true,
+        			  content: 'calculateprojectmoney.html?total='+this.total+"&ddno="+this.ddno
+        		});
+        		}else{
+        			layer.msg("无信息")
+        		}
+        	}else{
+        		layer.msg("请选择划价患者")
+        	}
+        	},
+        	//读取挂号病人
+        	choose_registraion(){
+        			var index = layer.open({
+          			  title:'选择患者',
+          			  type: 2,
+          			  area: ['800px', '550px'],
+          			  fixed: false, //不固定
+          			  maxmin: true,
+          			  content: 'choosememberlist.html'
+          		});
+        	},
+        	
+        	read_registration(){
+        		if(id!=""){
+        		axios.post("registrationShow",qs.stringify({
+        			id:id.toString(),
+        		})).then(response =>{
+        			this.registration = response.data.registration
+        			this.id_no = response.data.registration.id
+        			this.name = response.data.registration.member.realname
+        			this.sex = response.data.registration.member.sex
+        			this.age = response.data.registration.member.age
+        			this.tel = response.data.registration.member.tel
+        			this.idcard = response.data.registration.member.idcard
+        			this.office = response.data.registration.office.name
+        			this.price = response.data.registration.price
+        			this.ddno = response.data.registration.ddno
+        			
+        			this.get_projectjcmsglist(this.ddno)
+        			
+        		})
+        		}
+    		},
+    		
+    		//查找项目信息
+        	get_projectjcmsglist(){
+        		axios.post("projectjcmsgList",qs.stringify({
+        			ddno:this.ddno
+        		})).then(response =>{
+        			console.log(response.data)
+        			this.projectjcmsglist = response.data.projectjcmsglist
+        			this.total = response.data.total
+        		})
+        	},
+            
+        }
+    });
+</script>
+</html>

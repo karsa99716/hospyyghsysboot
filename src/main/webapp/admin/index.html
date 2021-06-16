@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+
+    <title>医院预约挂号系统</title>
+
+    <meta name="keywords" content="A+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="A+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=4.1.0" rel="stylesheet">
+    
+
+<script type="text/javascript" src="../axios/vue.js"></script>
+<script type="text/javascript" src="../axios/axios.min.js"></script>
+<script type="text/javascript" src="../axios/qs.js"></script>
+<script type="text/javascript" src="../layer/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="../layer/layer.js"></script>
+
+
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i>
+            </div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                        <!-- img/profile_small.jpg -->
+                            <span><img alt="image" class="img-circle" v-bind:src="['../upload/'+admin.filename]" width="64px" height="64px"/></span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                               <span class="block m-t-xs"><strong class="font-bold">{{admin.username}}</strong></span>
+                                <span class="text-muted text-xs block">{{admin.usertype}}<b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a class="J_menuItem" href="useredit.html">个人资料</a>
+                                </li>
+                                <li><a class="J_menuItem" href="passwordedit.html">修改密码</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="javascript:;" @click="logout()">安全退出</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">A+
+                        </div>
+                    </li>
+                    
+                    <li v-show="admin.usertype=='管理员'">
+                        <a href="#">
+                            <i class="fa fa-th-list"></i>
+                            <span class="nav-label">信息管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="categorylist.html" data-index="0">分类管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="officelist.html" data-index="1">科室管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="doctorlist.html" data-index="2">医生管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="huanzhelist.html" data-index="3">患者管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="productlist.html" data-index="4">药品管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="projectlist.html" data-index="5">项目管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="newslist.html" data-index="5">资讯管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="hospitaledit.html" data-index="5">医院简介</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="bannerlist.html" data-index="5">滚动图片</a>
+                            </li>
+
+                        </ul>
+
+                    </li>
+                    
+                    <li v-show="admin.usertype=='管理员' || admin.usertype=='医生'">
+                        <a href="#">
+                            <i class="fa fa-th-list"></i>
+                            <span class="nav-label">门诊管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="registrationlist.html" data-index="0">患者列表</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="calculatesearch.html" data-index="1">处方划价缴费</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="calculatesearchproject.html" data-index="2">项目划价缴费</a>
+                            </li>
+                        </ul>
+
+
+                    </li>
+
+                    <li v-show="admin.usertype=='管理员' || admin.usertype=='医生'">
+
+
+                        <a href="#">
+                            <i class="fa fa-th-list"></i>
+                            <span class="nav-label">医技管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="jcjyapplylist.html" data-index="0">检查检验申请列表</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!--<li v-show="admin.usertype=='管理员' || admin.usertype=='医生'">-->
+                        <!--<a href="#">-->
+                            <!--<i class="fa fa-th-list"></i>-->
+                            <!--<span class="nav-label">住院管理</span>-->
+                            <!--<span class="fa arrow"></span>-->
+                        <!--</a>-->
+                        <!--<ul class="nav nav-second-level">-->
+                            <!--<li>-->
+                                <!--<a class="J_menuItem" href="hospitalizedlist.html" data-index="0">入院登记</a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a class="J_menuItem" href="jzproductlist.html" data-index="1">药品记账</a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a class="J_menuItem" href="jzprojectlist.html" data-index="2">项目记账</a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a class="J_menuItem" href="hospitalizedcylist.html" data-index="3">出院结算</a>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+
+                    <!--</li>-->
+                    
+                    <li v-show="admin.usertype=='管理员' || admin.usertype=='医生'">
+                        <a href="#">
+                            <i class="fa fa-th-list"></i>
+                            <span class="nav-label">药房管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="fetchdruglist.html" data-index="0">药房取药</a>
+                            </li>
+                        </ul>
+
+                    </li>
+
+                    <li v-show="admin.usertype=='管理员' || admin.usertype=='医生'">
+                        <a href="#">
+                            <i class="fa fa-th-list"></i>
+                            <span class="nav-label">患者服务</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="msglist.html" data-index="0">患者咨询</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="pjlist.html" data-index="0">收到评价</a>
+                            </li>
+                        </ul>
+
+                    </li>
+
+                    
+                    
+                    <li v-show="admin.usertype=='管理员'">
+                        <a href="#">
+                            <i class="fa fa-th-list"></i>
+                            <span class="nav-label">仓库管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="inventorylist.html" data-index="0">库存管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="ininventorylist.html" data-index="1">入库记录</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="outinventorylist.html" data-index="1">出库记录</a>
+                            </li>
+                        </ul>
+
+                    </li>
+                    
+                    
+                    <!--<li v-show="admin.usertype=='管理员'">-->
+                        <!--<a href="#">-->
+                            <!--<i class="fa fa-th-list"></i>-->
+                            <!--<span class="nav-label">排班管理</span>-->
+                            <!--<span class="fa arrow"></span>-->
+                        <!--</a>-->
+                        <!--<ul class="nav nav-second-level">-->
+                            <!--<li>-->
+                                <!--<a class="J_menuItem" href="worklist.html" data-index="0">排班信息</a>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+
+                    <!--</li>-->
+                    
+                    
+                    <li v-show="admin.usertype=='管理员'">
+                        <a href="#">
+                            <i class="fa fa-th-list"></i>
+                            <span class="nav-label">统计管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="tjregistration.html" data-index="0">门诊挂号费统计</a>
+                            </li>
+                            <!--<li>-->
+                                <!--<a class="J_menuItem" href="tjhospitalized.html" data-index="1">住院费用统计</a>-->
+                            <!--</li>-->
+                        </ul>
+
+                    </li>
+                    
+                    
+                    <li v-show="admin.usertype=='患者'">
+                        <a href="#">
+                            <i class="fa fa-th-list"></i>
+                            <span class="nav-label">业务管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="guahaolist.html" data-index="0">用户挂号</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="hospitalizedcylist.html" data-index="1">出院结算</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="fetchdruglist.html" data-index="2">药房取药</a>
+                            </li>
+                        </ul>
+
+                    </li>
+                    
+                    
+                    <!-- 
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-gear"></i>
+                            <span class="nav-label">系统管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="main1.html" data-index="0">系统首页</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="main2.html">项目分析情况</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="main3.html">报表统计分析</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="main4.html">销售数据统计</a>
+                            </li>
+                            <li>
+                                <a href="main5.html" target="_blank">其它风格样式</a>
+                            </li>
+                        </ul>
+
+                    </li>
+                    
+ -->
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row border-bottom" style="height:50px;text-align: center;line-height: 50px;font-size:24px;">
+                    医院预约挂号系统
+                    
+            </div>
+            <div class="row content-tabs">
+                <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
+                </button>
+                <nav class="page-tabs J_menuTabs">
+                    <div class="page-tabs-content">
+                        <a href="javascript:;" class="active J_menuTab" data-id="index_v1.html">首页</a>
+                    </div>
+                </nav>
+                <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
+                </button>
+                <div class="btn-group roll-nav roll-right">
+                    <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>
+
+                    </button>
+                    <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                        <li class="divider"></li>
+                        <li class="J_tabCloseAll"><a>关闭全部选项卡</a>
+                        </li>
+                        <li class="J_tabCloseOther"><a>关闭其他选项卡</a>
+                        </li>
+                    </ul>
+                </div>
+                <a href="javascript:;" @click="logout()" class="roll-nav roll-right J_tabExit"><i class="fa fa fa-sign-out"></i> 退出</a>
+            </div>
+            <div class="row J_mainContent" id="content-main">
+                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="main.html" frameborder="0" data-id="main.html" seamless></iframe>
+            </div>
+            <div class="footer">
+                <div class="pull-right">&copy; 2020-2021 
+                </div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+        <!--右侧边栏开始-->
+        
+        <!--右侧边栏结束-->
+        <!--mini聊天窗口开始
+        
+        <div id="small-chat">
+            <span class="badge badge-warning pull-right">5</span>
+            <a class="open-small-chat">
+                <i class="fa fa-comments"></i>
+
+            </a>
+        </div>-->
+        <!--mini聊天窗口结束-->
+    </div>
+
+    <!-- 全局js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.7"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="js/plugins/layer/layer.js"></script>
+
+    <!-- 自定义js -->
+    <script src="js/angel-ui.min.js?v=4.2.0"></script>
+    <script type="text/javascript" src="js/angel-main_tab.min.js"></script>
+    <!-- 第三方插件 -->
+    <script src="js/plugins/pace/pace.min.js"></script>
+
+</body>
+<script type="text/javascript">
+  var vm = new Vue({
+	  el:"#wrapper",
+	  data:{
+		  admin:"",
+	  },
+	  created(){
+		  this.get_admin()
+	  },
+	  methods:{
+		  get_admin(){
+			  axios.post('checkadmin').then(response =>{
+  				  if(response.data.data==200){
+  					this.admin = response.data.admin
+  				  }else{
+  					location.replace("login.html")
+  					
+  				  }
+  			  })
+		  },
+		  logout(){
+			  //sessionStorage.removeItem("admin")
+			  axios.post('logout').then(response =>{
+				  window.location.replace("login.html")
+			  })
+		  }
+	  }
+  })
+</script>
+
+</html>

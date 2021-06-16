@@ -1,0 +1,93 @@
+
+
+<!DOCTYPE html>
+<html style="background-color: #e2e2e2;">
+<head>
+  <meta charset="utf-8">
+  <meta name="keywords" content="{{ lay.base.keywords }}">
+  <meta name="description" content="{{ lay.base.description }}">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>医院预约挂号系统</title>
+  <link rel="stylesheet" href="../res/layui/css/layui.css">
+  <script type="text/javascript" src="../../axios/vue.js"></script>
+  <script type="text/javascript" src="../../axios/axios.min.js"></script>
+  <script type="text/javascript" src="../../axios/qs.js"></script>
+  <script type="text/javascript" src="../../axios/getUrlParams.js"></script>
+  <script type="text/javascript" src="../../layer/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="../../layer/layer.js"></script>
+  <style>
+  </style>
+</head>
+<body >
+<div id="app" style="align-content: center">
+
+  <table class="layui-table" lay-size="sm" style="width: 90%;">
+    <colgroup>
+      <col>
+      <col>
+      <col>
+    </colgroup>
+    <thead>
+    <tr>
+      <th>序号</th>
+      <th>药品名称</th>
+      <th>数量</th>
+      <th>单价</th>
+    </tr>
+
+    </thead>
+    <tbody>
+    <tr v-if="prescriptionmsglist.length!=0" v-for="(prescriptionmsg,i) in prescriptionmsglist">
+      <td>{{i+1}}</td>
+      <td>{{prescriptionmsg.product.name}}</td>
+      <td>{{prescriptionmsg.num}}</td>
+      <td>{{prescriptionmsg.price}}元</td>
+    </tr>
+    <tr>
+      <td colspan="4">总金额:{{total}}元</td>
+    </tr>
+    </tbody>
+  </table>
+
+
+</div>
+</body>
+<script src="../res/layui/layui.js"  charset="utf-8"></script>
+<script>
+
+
+
+
+
+
+    var qs = Qs
+    var registid = UrlParam.paramValues("registid").toString()
+    var ddno = UrlParam.paramValues("ddno").toString()
+    var vmm = new Vue({
+        el: '#app',
+        data: {
+            prescriptionmsglist:[],
+            ddno:ddno,
+            registid:registid,
+            total:'',
+        },
+        mounted(){
+            this.get_prescriptionmsglist()
+        },
+        methods: {
+            //查找开药信息
+            get_prescriptionmsglist(){
+                axios.post("../../admin/prescriptionmsgList",qs.stringify({
+                    ddno:this.ddno
+                })).then(response =>{
+                    console.log(response.data)
+                    this.prescriptionmsglist = response.data.prescriptionmsglist
+                    this.total = response.data.total
+                })
+            },
+        }
+    });
+</script>
+</html>

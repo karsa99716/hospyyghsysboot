@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.HospitalDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Hospital">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="note" jdbcType="VARCHAR" property="note" />
+  </resultMap>
+  
+
+   
+   <select id="findById" parameterType="int" resultType="com.bean.Hospital">
+      select * from hospital where id=#{id}
+    </select>
+    
+
+    <update id="update" parameterType="com.bean.Hospital">
+       update hospital
+       <set>
+            <if test="note!=null and note!=''"> note=#{note},</if>
+       </set>
+       where id=#{id}
+    </update>
+    
+    
+</mapper>

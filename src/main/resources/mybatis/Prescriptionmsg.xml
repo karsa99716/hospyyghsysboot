@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.PrescriptionmsgDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Prescriptionmsg">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="ddno" jdbcType="VARCHAR" property="ddno" />
+    <result column="productid" jdbcType="VARCHAR" property="productid" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+  </resultMap>
+  
+ 	 <insert id="add" parameterType="com.bean.Prescriptionmsg">
+      insert into prescriptionmsg values(null,#{ddno},#{productid},#{num},#{price})
+    </insert>
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from prescriptionmsg where 1=1 
+     <if test="ddno!=null and ddno!=''">
+     and ddno=#{ddno}
+     </if>
+     order by id desc
+   </select>
+   
+    
+    <delete id="delete" parameterType="Int">
+      delete from prescriptionmsg where id=#{id}
+    </delete>
+    
+    
+    
+  
+</mapper>

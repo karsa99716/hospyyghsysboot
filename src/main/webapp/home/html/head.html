@@ -1,0 +1,149 @@
+
+
+<!DOCTYPE html>
+<html style="background-color: #e2e2e2;" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>医院预约挂号系统</title>
+
+  <!--<link rel="stylesheet" href="../../res/layui/css/layui.css">-->
+  <!--<script type="text/javascript" src="../../../layer/jquery-2.0.3.min.js"></script>-->
+  <!--<script src="../../res/layui/layui.js"  charset="utf-8"></script>-->
+  <!--<script type="text/javascript" src="../../../axios/vue.js"></script>-->
+  <!--<script type="text/javascript" src="../../../axios/axios.min.js"></script>-->
+  <!--<script type="text/javascript" src="../../../axios/qs.js"></script>-->
+</head>
+<body class="fly-full">
+<div   id="headerapp">
+<div class="fly-header layui-bg-black" >
+  <div class="layui-container">
+    <!--<a class="fly-logo" href="/">
+      <img src="../res/images/logo.png" alt="layui">
+    </a>-->
+    <a class="fly-logo" href="index.html">
+      <h2><font color="white">医院预约挂号系统</font></h2>
+    </a>
+    <!--
+    <ul class="layui-nav fly-nav layui-hide-xs">
+      <li class="layui-nav-item">
+        <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
+      </li>
+      <li class="layui-nav-item layui-this">
+        <a href=""><i class="iconfont icon-iconmingxinganli"></i>案例</a>
+      </li>
+      <li class="layui-nav-item">
+        <a href="http://www.layui.com/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
+      </li>
+    </ul>-->
+
+    <ul class="layui-nav fly-nav-user">
+
+      <!-- 未登入的状态 -->
+      <div v-show="sessionmember==''">
+        <li class="layui-nav-item">
+          <a class="iconfont icon-touxiang layui-hide-xs" href="../user/login.html"></a>
+        </li>
+        <li class="layui-nav-item">
+          <a href="login.html">登入</a>
+        </li>
+        <li class="layui-nav-item">
+          <a href="reg.html">注册</a>
+        </li>
+      </div>
+
+      <!-- 登入后的状态 -->
+      <div v-show="sessionmember!=''">
+        <li class="layui-nav-item">
+          <a class="fly-nav-avatar" href="javascript:;">
+            <cite class="layui-hide-xs">{{sessionmember.realname}}</cite>
+            <!--<i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>-->
+            <!--<i class="layui-badge fly-badge-vip layui-hide-xs">VIP3</i>-->
+            <img :src="['../../upload/'+sessionmember.filename]">
+          </a>
+          <dl class="layui-nav-child">
+            <dd><a href="memberset.html"><i class="layui-icon">&#xe620;</i>个人中心</a></dd>
+            <hr style="margin: 5px 0;">
+            <dd><a @click="memberlogout()" href="javascript:;" style="text-align: center;">退出</a></dd>
+          </dl>
+        </li>
+
+      </div>
+
+    </ul>
+  </div>
+</div>
+
+<div class="layui-hide-xs">
+  <div class="fly-panel fly-column">
+    <div class="layui-container">
+      <ul class="layui-clear">
+            <li class="layui-this"><a href="index.html">首页</a></li>
+            <li><a href="others.html">健康知识</a></li>
+            <li><a href="doctors.html">预约挂号</a></li>
+            <li><a href="depts.html">科室导航</a></li>
+            <li><a href="about.html">关于我们</a></li>
+            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
+
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+<script type="text/javascript">
+    layui.cache.page = 'user';
+    layui.cache.user = {
+        username: '游客'
+        ,uid: -1
+        ,avatar: '../res/images/avatar/00.jpg'
+        ,experience: 83
+        ,sex: '男'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: '../res/mods/'
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+
+
+    var qs = Qs
+    var headervm = new Vue({
+        el:"#headerapp",
+        data:{
+            sessionmember:"",
+        },
+        mounted(){
+            this.getsessionmember()
+        },
+        methods:{
+            getsessionmember(){
+                axios.post('../../admin/checkmember',qs.stringify({
+                })).then(response =>{
+                    if(response.data.data==200){
+                        this.sessionmember = response.data.member
+                    }else{
+                        // window.location.replace("login.html")
+                        //location.replace("index.html")
+                    }
+                }).catch(error =>{
+                    console.log(error)
+                })
+            },
+            memberlogout(){
+                axios.post('../../admin/memberlogout',qs.stringify({
+                })).then(response =>{
+                    window.location.replace("index.html")
+                }).catch(error =>{
+                    console.log(error)
+                })
+            },
+
+        }
+    })
+
+</script>
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserprojectDAO">
+  <resultMap id="BaseResultMap" type="com.bean.Userproject">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="hospitalizedid" jdbcType="VARCHAR" property="hospitalizedid" />
+    <result column="projectid" jdbcType="VARCHAR" property="projectid" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="savetime" jdbcType="VARCHAR" property="savetime" />
+  </resultMap>
+  
+  <insert id="add" parameterType="com.bean.Userproject">
+      insert into userproject values(null,#{hospitalizedid},#{projectid},#{price},#{savetime})
+    </insert>
+  
+  <delete id="delete" parameterType="Int">
+      delete from userproject where id=#{id}
+    </delete>
+  
+  
+  <select id="selectAll" parameterType="hashmap" resultMap="BaseResultMap">
+     select * from userproject where 1=1 
+     <if test="hospitalizedid!=null and hospitalizedid!=''">
+     and hospitalizedid=#{hospitalizedid} 
+     </if>
+     order by id desc
+   </select>
+   
+   <select id="findById" parameterType="Int" resultType="com.bean.Userproject">
+     select * from userproject where id=#{id}
+   </select>
+  
+</mapper>
